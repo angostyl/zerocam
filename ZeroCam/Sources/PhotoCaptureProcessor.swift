@@ -4,96 +4,112 @@ import UIKit
 
 final class PhotoCaptureProcessor: NSObject, AVCapturePhotoCaptureDelegate {
     private let uniqueID: Int64
-    private let completionHandler: (UIImage?) -> Void
+    private let recipe: FilmRecipe
+    private let lens: String
+    private let ev: Float
+    private let completionHandler: (CapturedPhoto?) -> Void
 
     private var rawData: Data?
     private var jpegData: Data?
-    private var thumbnail: UIImage?
+    private var metadata: [String: Any] = [:]
 
-    init(uniqueID: Int64, completionHandler: @escaping (UIImage?) -> Void) {
+    init(uniqueID: Int64, recipe: FilmRecipe, lens: String, ev: Float, completionHandler: @escaping (CapturedPhoto?) -> Void) {
         self.uniqueID = uniqueID
+        self.recipe = recipe
+        self.lens = lens
+        self.ev = ev
         self.completionHandler = completionHandler
         super.init()
     }
 
-    // Chamado pelo AVFoundation para cada formato solicitado (RAW e JPEG)
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if let error = error {
             print("[ZeroCam] Erro no processamento do frame: \(error.localizedDescription)")
             return
         }
 
-        guard let data = photo.fileDataRepresentation() else {
-            print("[ZeroCam] Não foi possível extrair representação de dados do frame.")
-            return
-        }
+        guard let data = photo.fileDataRepresentation() else { return }
 
         if photo.isRawPhoto {
-            // Frame Bayer RAW puro (sem tone-mapping nem Deep Fusion da Apple)
             self.rawData = data
         } else {
-            // Frame Process Zero JPEG de velocidade imediata
             self.jpegData = data
-            if let image = UIImage(data: data) {
-                self.thumbnail = image
-            }
+            self.metadata = photo.metadata
         }
     }
 
-    // Chamado quando todos os frames solicitados foram capturados
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings, error: Error?) {
         if let error = error {
-            print("[ZeroCam] Erro na captura final: \(error.localizedDescription)")
+            print("[ZeroCam] Erro na captura: \(error.localizedDescription)")
             completionHandler(nil)
             return
         }
 
-        // Grava no Rolo de Fotos (PHPhotoLibrary)
-        saveToPhotoLibrary { [weak self] success in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.completionHandler(self.thumbnail)
-            }
-        }
-    }
-
-    private func saveToPhotoLibrary(completion: @escaping (Bool) -> Void) {
-        guard rawData != nil || jpegData != nil else {
-            completion(false)
+        // 1. Extrai imagem base
+        guard let baseJpegData = self.jpegData, var image = UIImage(data: baseJpegData) else {
+            completionHandler(nil)
             return
         }
 
-        PHPhotoLibrary.shared().performChanges({
-            let request = PHAssetCreationRequest.forAsset()
+        // 2. Aplica o filtro de filme analógico selecionado (se não for Process Zero puro)
+        if recipe != .processZero {
+            image = FilmFilterEngine.shared.applyRecipe(recipe, to: image)
+        }
 
-            // 1. Grava o Bayer RAW DNG
-            if let rawData = self.rawData {
-                let rawOptions = PHAssetResourceCreationOptions()
-                rawOptions.uniformTypeIdentifier = AVFileType.dng.rawValue
-                rawOptions.shouldMoveFile = false
-                request.addResource(with: .photo, data: rawData, options: rawOptions)
+        // 3. Extrai EXIF básico
+        var iso = 64
+        var shutterSpeed = "1/250s"
+        if let exif = metadata["{Exif}"] as? [String: Any] {
+            if let isoVal = (exif["ISOSpeedRatings"] as? [Int])?.first { iso = isoVal }
+            if let expTime = exif["ExposureTime"] as? Double, expTime > 0 {
+                shutterSpeed = expTime < 1.0 ? "1/\(Int(round(1.0 / expTime)))s" : "\(String(format: "%.1f", expTime))s"
             }
+        }
 
-            // 2. Grava o JPEG Process Zero
-            if let jpegData = self.jpegData {
-                let jpegOptions = PHAssetResourceCreationOptions()
-                jpegOptions.uniformTypeIdentifier = AVFileType.jpg.rawValue
-                jpegOptions.shouldMoveFile = false
+        let captured = CapturedPhoto(
+            id: UUID(),
+            image: image,
+            date: Date(),
+            recipe: recipe,
+            lens: lens,
+            iso: iso,
+            shutterSpeed: shutterSpeed,
+            ev: ev,
+            isRaw: rawData != nil
+        )
 
-                if self.rawData != nil {
-                    // Se já adicionamos o DNG, o JPEG é registrado como representação alternativa
-                    request.addResource(with: .alternatePhoto, data: jpegData, options: jpegOptions)
+        // 4. Salva no Rolo de Fotos (PHPhotoLibrary com fallback para UIImageWriteToSavedPhotosAlbum)
+        saveToLibrary(image: image, rawData: rawData)
+
+        DispatchQueue.main.async { [weak self] in
+            self?.completionHandler(captured)
+        }
+    }
+
+    private func saveToLibrary(image: UIImage, rawData: Data?) {
+        // Fallback imediato para garantir que a foto sempre entra no rolo
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+
+        // Gravação estruturada com DNG
+        guard let raw = rawData else { return }
+
+        let tempDngURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).dng")
+        do {
+            try raw.write(to: tempDngURL)
+            PHPhotoLibrary.shared().performChanges({
+                let request = PHAssetCreationRequest.forAsset()
+                let options = PHAssetResourceCreationOptions()
+                options.shouldMoveFile = true
+                request.addResource(with: .photo, fileURL: tempDngURL, options: options)
+            }) { success, err in
+                if let err = err {
+                    print("[ZeroCam] Erro ao gravar DNG: \(err.localizedDescription)")
                 } else {
-                    request.addResource(with: .photo, data: jpegData, options: jpegOptions)
+                    print("[ZeroCam] DNG Bayer RAW gravado no rolo da câmara.")
                 }
             }
-        }) { success, error in
-            if let error = error {
-                print("[ZeroCam] Erro ao salvar foto no rolo: \(error.localizedDescription)")
-            } else {
-                print("[ZeroCam] Captura Process Zero gravada com sucesso no rolo da câmara.")
-            }
-            completion(success)
+        } catch {
+            print("[ZeroCam] Falha ao escrever temp DNG: \(error)")
         }
     }
 }

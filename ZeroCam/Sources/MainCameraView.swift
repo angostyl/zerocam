@@ -5,8 +5,8 @@ import AVFoundation
 struct MainCameraView: View {
     @EnvironmentObject var cameraManager: CameraManager
     @State private var showingInfoSheet = false
-    @State private var isShowingEVSlider = false
-    @State private var reticleScreenLocation: CGPoint? = nil
+    @State private var showingGallery = false
+    @State private var selectedManualTab: Int = 0 // 0=ISO, 1=Shutter, 2=Focus, 3=WB
 
     private let hapticImpact = UIImpactFeedbackGenerator(style: .medium)
     private let hapticLight = UIImpactFeedbackGenerator(style: .light)
@@ -18,17 +18,19 @@ struct MainCameraView: View {
             VStack(spacing: 0) {
                 // MARK: - Barra Superior
                 topBar
-                    .padding(.horizontal, 20)
-                    .padding(.top, 10)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
                     .frame(height: 50)
 
                 Spacer()
 
-                // MARK: - Viewfinder (Sensor 4:3)
+                // MARK: - Viewfinder Sensor 4:3
                 ZStack {
                     CameraPreviewView(session: cameraManager.session) { normalizedPoint in
-                        cameraManager.setFocusAndExposurePoint(normalizedPoint)
-                        hapticLight.impactOccurred()
+                        if cameraManager.controlMode == .auto {
+                            cameraManager.setFocusAndExposurePoint(normalizedPoint)
+                            hapticLight.impactOccurred()
+                        }
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     .aspectRatio(3.0 / 4.0, contentMode: .fit)
@@ -37,8 +39,8 @@ struct MainCameraView: View {
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
 
-                    // Retículo de Foco / Exposição
-                    if cameraManager.isFocusing, let focusPoint = cameraManager.focusPoint {
+                    // Retículo de Foco (Modo Auto)
+                    if cameraManager.controlMode == .auto, cameraManager.isFocusing, let focusPoint = cameraManager.focusPoint {
                         FocusReticleView()
                             .position(
                                 x: focusPoint.x * UIScreen.main.bounds.width * 0.9,
@@ -46,7 +48,7 @@ struct MainCameraView: View {
                             )
                     }
 
-                    // Seletor de Lentes Físicas Sobreposto
+                    // Seletor de Lentes (0.5x, 1x, 2x, 5x)
                     VStack {
                         Spacer()
                         lensSelectorBar
@@ -57,20 +59,26 @@ struct MainCameraView: View {
 
                 Spacer()
 
-                // MARK: - Controle de EV (Compensação de Exposição)
-                exposureControlBar
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 8)
+                // MARK: - Painel de Controlo (Auto EV vs Pro Manual)
+                if cameraManager.controlMode == .auto {
+                    autoExposureBar
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 6)
+                } else {
+                    proControlsDrawer
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 4)
+                }
 
-                // MARK: - Barra Inferior (Disparo, Galeria e Info)
+                // MARK: - Barra Inferior de Disparo e Galeria
                 bottomBar
-                    .padding(.horizontal, 30)
-                    .padding(.bottom, 24)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 20)
             }
 
-            // Flash de Obturador ao Disparar
+            // Flash visual do obturador
             if cameraManager.isCapturing {
-                Color.black.opacity(0.6)
+                Color.black.opacity(0.65)
                     .ignoresSafeArea()
                     .transition(.opacity)
             }
@@ -78,58 +86,98 @@ struct MainCameraView: View {
         .sheet(isPresented: $showingInfoSheet) {
             ProcessZeroInfoSheet()
         }
+        .fullScreenCover(isPresented: $showingGallery) {
+            PhotoGalleryView(photos: cameraManager.capturedPhotos)
+        }
     }
 
-    // MARK: - Componentes de UI
-
+    // MARK: - Barra Superior
     private var topBar: some View {
-        HStack {
-            // Badge Process Zero
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(Color.yellow)
-                    .frame(width: 7, height: 7)
-                Text("PROCESS ZERO")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    .foregroundColor(.white)
-                Text("RAW+JPG")
-                    .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                    .foregroundColor(.yellow)
+        HStack(spacing: 8) {
+            // Seletor de Filtro de Filme
+            Menu {
+                ForEach(FilmRecipe.allCases) { recipe in
+                    Button(action: {
+                        cameraManager.selectedRecipe = recipe
+                        hapticLight.impactOccurred()
+                    }) {
+                        HStack {
+                            Text(recipe.rawValue)
+                            if cameraManager.selectedRecipe == recipe {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                }
+            } label: {
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(Color.yellow)
+                        .frame(width: 7, height: 7)
+                    Text(cameraManager.selectedRecipe.badgeText)
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(.yellow)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(Color.white.opacity(0.12))
+                .clipShape(Capsule())
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(Color.white.opacity(0.1))
-            .clipShape(Capsule())
 
             Spacer()
 
-            // Botão de Flash
+            // Toggle AUTO / PRO Manual
+            HStack(spacing: 2) {
+                ForEach(CameraControlMode.allCases) { mode in
+                    Button(action: {
+                        cameraManager.setControlMode(mode)
+                        hapticLight.impactOccurred()
+                    }) {
+                        Text(mode.rawValue)
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .foregroundColor(cameraManager.controlMode == mode ? .black : .white.opacity(0.7))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(cameraManager.controlMode == mode ? Color.yellow : Color.clear)
+                            .clipShape(Capsule())
+                    }
+                }
+            }
+            .padding(2)
+            .background(Color.white.opacity(0.1))
+            .clipShape(Capsule())
+
+            // Botão Flash
             Button(action: {
                 cameraManager.toggleFlash()
                 hapticLight.impactOccurred()
             }) {
                 Image(systemName: flashIconName)
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundColor(cameraManager.flashMode == .off ? .white.opacity(0.7) : .yellow)
-                    .frame(width: 38, height: 38)
+                    .frame(width: 34, height: 34)
                     .background(Color.white.opacity(0.1))
                     .clipShape(Circle())
             }
 
-            // Botão de Informações
+            // Info
             Button(action: { showingInfoSheet = true }) {
                 Image(systemName: "info.circle")
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundColor(.white.opacity(0.7))
-                    .frame(width: 38, height: 38)
+                    .frame(width: 34, height: 34)
                     .background(Color.white.opacity(0.1))
                     .clipShape(Circle())
             }
         }
     }
 
+    // MARK: - Seletor de Lentes (0.5x, 1x, 2x, 5x)
     private var lensSelectorBar: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             ForEach(cameraManager.availableLenses) { lens in
                 Button(action: {
                     cameraManager.switchLens(to: lens)
@@ -148,64 +196,168 @@ struct MainCameraView: View {
             }
         }
         .padding(4)
-        .background(Color.black.opacity(0.4))
+        .background(Color.black.opacity(0.45))
         .clipShape(Capsule())
     }
 
-    private var exposureControlBar: some View {
-        VStack(spacing: 4) {
-            HStack {
-                Text("EV")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.6))
+    // MARK: - Controlo Auto EV
+    private var autoExposureBar: some View {
+        HStack {
+            Text("EV")
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .foregroundColor(.white.opacity(0.6))
 
-                Slider(
-                    value: Binding(
-                        get: { Double(cameraManager.exposureBias) },
-                        set: { cameraManager.setExposureBias(Float($0)) }
-                    ),
-                    in: -2.0...2.0,
-                    step: 0.1
-                )
-                .accentColor(.yellow)
+            Slider(
+                value: Binding(
+                    get: { Double(cameraManager.exposureBias) },
+                    set: { cameraManager.setExposureBias(Float($0)) }
+                ),
+                in: -2.0...2.0,
+                step: 0.1
+            )
+            .accentColor(.yellow)
 
-                Text(String(format: "%+.1f", cameraManager.exposureBias))
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
-                    .foregroundColor(cameraManager.exposureBias == 0 ? .white.opacity(0.7) : .yellow)
-                    .frame(width: 44, alignment: .trailing)
-            }
+            Text(String(format: "%+.1f", cameraManager.exposureBias))
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundColor(cameraManager.exposureBias == 0 ? .white.opacity(0.7) : .yellow)
+                .frame(width: 44, alignment: .trailing)
         }
     }
 
+    // MARK: - Gaveta de Controlos PRO Manual
+    private var proControlsDrawer: some View {
+        VStack(spacing: 8) {
+            // Seletor de Parâmetro PRO
+            HStack(spacing: 6) {
+                ProTabButton(title: "ISO", isSelected: selectedManualTab == 0) { selectedManualTab = 0 }
+                ProTabButton(title: "OBT", isSelected: selectedManualTab == 1) { selectedManualTab = 1 }
+                ProTabButton(title: "FOCO", isSelected: selectedManualTab == 2) { selectedManualTab = 2 }
+                ProTabButton(title: "WB", isSelected: selectedManualTab == 3) { selectedManualTab = 3 }
+            }
+
+            // Slider Dinâmico Conforme Aba Ativa
+            if selectedManualTab == 0 {
+                // ISO (50 a 3200)
+                HStack {
+                    Text("ISO")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.6))
+                    Slider(
+                        value: Binding(
+                            get: { Double(cameraManager.manualISO) },
+                            set: { cameraManager.setManualISO(Float($0)) }
+                        ),
+                        in: 50...3200,
+                        step: 25
+                    )
+                    .accentColor(.yellow)
+                    Text("\(Int(cameraManager.manualISO))")
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .foregroundColor(.yellow)
+                        .frame(width: 50, alignment: .trailing)
+                }
+            } else if selectedManualTab == 1 {
+                // Shutter Speed (Índices padronizados)
+                HStack {
+                    Text("SEC")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.6))
+                    Slider(
+                        value: Binding(
+                            get: { Double(cameraManager.manualShutterIndex) },
+                            set: { cameraManager.setManualShutterIndex(Int($0)) }
+                        ),
+                        in: 0...Double(CameraManager.shutterSpeeds.count - 1),
+                        step: 1
+                    )
+                    .accentColor(.yellow)
+                    Text(CameraManager.shutterSpeeds[cameraManager.manualShutterIndex].display)
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .foregroundColor(.yellow)
+                        .frame(width: 60, alignment: .trailing)
+                }
+            } else if selectedManualTab == 2 {
+                // Foco Manual (0.0 Macro a 1.0 Infinito)
+                HStack {
+                    Text("MACRO")
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.6))
+                    Slider(
+                        value: Binding(
+                            get: { Double(cameraManager.manualFocus) },
+                            set: { cameraManager.setManualFocus(Float($0)) }
+                        ),
+                        in: 0.0...1.0,
+                        step: 0.02
+                    )
+                    .accentColor(.yellow)
+                    Text("INF")
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                        .foregroundColor(.yellow)
+                }
+            } else if selectedManualTab == 3 {
+                // Balanço de Brancos Kelvin (2500K a 8500K)
+                HStack {
+                    Text("WB")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.6))
+                    Slider(
+                        value: Binding(
+                            get: { Double(cameraManager.manualKelvin) },
+                            set: { cameraManager.setManualKelvin(Float($0)) }
+                        ),
+                        in: 2500...8500,
+                        step: 100
+                    )
+                    .accentColor(.yellow)
+                    Text("\(Int(cameraManager.manualKelvin))K")
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .foregroundColor(.yellow)
+                        .frame(width: 58, alignment: .trailing)
+                }
+            }
+        }
+        .padding(10)
+        .background(Color.white.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    // MARK: - Barra Inferior
     private var bottomBar: some View {
         HStack(alignment: .center) {
-            // Miniatura da última foto salva
-            Group {
-                if let thumb = cameraManager.lastCapturedThumbnail {
-                    Image(uiImage: thumb)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 52, height: 52)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                        )
-                } else {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.white.opacity(0.08))
-                        .frame(width: 52, height: 52)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .foregroundColor(.white.opacity(0.3))
-                        )
+            // Miniatura da Galeria (Abre a galeria in-app!)
+            Button(action: {
+                showingGallery = true
+                hapticLight.impactOccurred()
+            }) {
+                Group {
+                    if let thumb = cameraManager.lastCapturedThumbnail {
+                        Image(uiImage: thumb)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 50, height: 50)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.white.opacity(0.4), lineWidth: 1.5)
+                            )
+                    } else {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.white.opacity(0.1))
+                            .frame(width: 50, height: 50)
+                            .overlay(
+                                Image(systemName: "photo.stack")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(.white.opacity(0.4))
+                            )
+                    }
                 }
             }
             .frame(width: 60)
 
             Spacer()
 
-            // Botão de Disparo Estilo Obturador Físico
+            // Disparador Obturador
             Button(action: {
                 hapticImpact.impactOccurred()
                 cameraManager.capturePhoto()
@@ -226,13 +378,13 @@ struct MainCameraView: View {
 
             Spacer()
 
-            // Indicador de Status / Equilíbrio
+            // Status Badge
             VStack(spacing: 2) {
-                Image(systemName: "camera.filters")
-                    .font(.system(size: 20))
-                    .foregroundColor(.white.opacity(0.5))
-                Text("ÓTICA")
-                    .font(.system(size: 9, weight: .bold, design: .monospaced))
+                Text(cameraManager.selectedRecipe.badgeText)
+                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .foregroundColor(.yellow)
+                Text("14-BIT RAW")
+                    .font(.system(size: 8, weight: .bold, design: .monospaced))
                     .foregroundColor(.white.opacity(0.5))
             }
             .frame(width: 60)
@@ -249,108 +401,20 @@ struct MainCameraView: View {
     }
 }
 
-// MARK: - Retículo Minimalista de Foco
-struct FocusReticleView: View {
-    @State private var scale: CGFloat = 1.3
-    @State private var opacity: Double = 1.0
-
-    var body: some View {
-        ZStack {
-            Rectangle()
-                .stroke(Color.yellow, lineWidth: 1.5)
-                .frame(width: 65, height: 65)
-
-            // Indicador central de medição
-            Circle()
-                .fill(Color.yellow)
-                .frame(width: 4, height: 4)
-        }
-        .scaleEffect(scale)
-        .opacity(opacity)
-        .onAppear {
-            withAnimation(.easeOut(duration: 0.25)) {
-                scale = 1.0
-            }
-            withAnimation(.easeIn(duration: 0.4).delay(0.9)) {
-                opacity = 0.0
-            }
-        }
-    }
-}
-
-// MARK: - Folha Explicativa do Process Zero
-struct ProcessZeroInfoSheet: View {
-    @Environment(\.dismiss) var dismiss
-
-    var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("O que é o Modo Process Zero?")
-                        .font(.title2.bold())
-                        .foregroundColor(.primary)
-
-                    Text("Os iPhones modernos aplicam algoritmos computacionais agressivos (Smart HDR, Deep Fusion e Photonic Engine) que empilham múltiplos frames em rajadas invisíveis, gerando contornos com nitidez artificial ('crunchy') e sombras excessivamente clareadas.")
-                        .font(.body)
-                        .foregroundColor(.secondary)
-
-                    Divider()
-
-                    Text("Como o ZeroCam captura:")
-                        .font(.headline)
-
-                    FeatureRow(
-                        icon: "bolt.slash",
-                        title: "Prioridade de Velocidade (.speed)",
-                        description: "Força o sensor a capturar 1 único frame ótico, desativando completamente a fusão temporal e o Deep Fusion."
-                    )
-
-                    FeatureRow(
-                        icon: "camera.metering.matrix",
-                        title: "Bayer RAW Intocado",
-                        description: "Grava o ficheiro DNG direto do sensor, sem a curva linear pré-cozinhada do Apple ProRAW."
-                    )
-
-                    FeatureRow(
-                        icon: "sparkles",
-                        title: "Textura & Grão Orgânicos",
-                        description: "Preserva a imperfeição ótica natural da lente e o ruído orgânico do sensor sem efeito de aquarela."
-                    )
-
-                    Spacer(minLength: 20)
-                }
-                .padding(24)
-            }
-            .navigationTitle("Filosofia Ótica")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("OK") { dismiss() }
-                }
-            }
-        }
-    }
-}
-
-struct FeatureRow: View {
-    let icon: String
+struct ProTabButton: View {
     let title: String
-    let description: String
+    let isSelected: Bool
+    let action: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
-            Image(systemName: icon)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(.yellow)
-                .frame(width: 28)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(title)
-                    .font(.subheadline.bold())
-                Text(description)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-            }
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                .foregroundColor(isSelected ? .black : .white.opacity(0.7))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 5)
+                .background(isSelected ? Color.yellow : Color.white.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
         }
     }
 }
