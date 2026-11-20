@@ -49,7 +49,7 @@ final class PreviewUIView: UIView {
     @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
         let location = gesture.location(in: self)
         // Converte o ponto do ecrã para o espaço normalizado (0.0 a 1.0) do sensor de captura
-        let pointOfInterest = videoPreviewLayer.captureDevicePointOfInterest(for: location)
+        let pointOfInterest = videoPreviewLayer.captureDevicePointConverted(fromLayerPoint: location)
         onTap?(pointOfInterest)
     }
 }

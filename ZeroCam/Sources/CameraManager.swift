@@ -259,7 +259,7 @@ final class CameraManager: NSObject, ObservableObject {
             if let rawFormat = rawFormatType {
                 // Captura DNG Bayer + JPEG complementar
                 settings = AVCapturePhotoSettings(
-                    rawPhotoPixelFormatType: rawFormat,
+                    rawPixelFormatType: rawFormat,
                     processedFormat: [AVVideoCodecKey: AVVideoCodecType.jpeg]
                 )
             } else {
