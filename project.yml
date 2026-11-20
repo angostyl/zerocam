@@ -1,0 +1,35 @@
+name: ZeroCam
+options:
+  bundleIdPrefix: com.firmwarecamera
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    PRODUCT_NAME: ZeroCam
+    PRODUCT_BUNDLE_IDENTIFIER: com.firmwarecamera.ZeroCam
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+    TARGETED_DEVICE_FAMILY: "1" # iPhone only
+    INFOPLIST_FILE: ZeroCam/Resources/Info.plist
+    ENABLE_BITCODE: NO
+    CODE_SIGNING_ALLOWED: NO
+    CODE_SIGNING_REQUIRED: NO
+    CODE_SIGN_IDENTITY: ""
+    DEVELOPMENT_TEAM: ""
+
+targets:
+  ZeroCam:
+    type: application
+    platform: iOS
+    sources:
+      - path: ZeroCam/Sources
+      - path: ZeroCam/Resources
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_KEY_UILaunchScreen_Generation: YES
