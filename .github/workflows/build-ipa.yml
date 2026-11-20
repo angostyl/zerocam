@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: Build & Package ZeroCam IPA
-    runs-on: macos-13 # Runner macOS com Xcode 15 pré-instalado
+    runs-on: macos-latest # Runner padrão oficial do GitHub com Xcode pré-instalado
 
     steps:
       - name: Checkout Repository
