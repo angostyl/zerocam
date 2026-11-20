@@ -1,4 +1,6 @@
 import AVFoundation
+import CoreVideo
+import UIKit
 import SwiftUI
 import Combine
 import Photos
@@ -248,7 +250,6 @@ final class CameraManager: NSObject, ObservableObject {
             // 1. Procurar formato Bayer RAW real do sensor (não ProRAW)
             let rawFormatType = self.photoOutput.availableRawPhotoPixelFormatTypes.first {
                 $0 == kCVPixelFormatType_14Bayer_RGGB ||
-                $0 == kCVPixelFormatType_14Bayer_rggb_14 ||
                 $0 == kCVPixelFormatType_14Bayer_BGGR ||
                 $0 == kCVPixelFormatType_14Bayer_GRBG ||
                 $0 == kCVPixelFormatType_14Bayer_GBRG

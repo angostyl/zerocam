@@ -26,22 +26,23 @@ jobs:
       - name: Compilar App iOS (Release / Sem Assinatura)
         run: |
           if [ -d "ios-app" ]; then cd ios-app; fi
-          xcodebuild clean archive \
+          xcodebuild clean build \
             -project ZeroCam.xcodeproj \
             -scheme ZeroCam \
             -configuration Release \
             -destination "generic/platform=iOS" \
-            -archivePath build/ZeroCam.xcarchive \
+            -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            AD_HOC_CODE_SIGNING_ALLOWED=YES
+            CODE_SIGN_IDENTITY=""
 
       - name: Empacotar IPA para Sideloadly / AltStore
         run: |
           if [ -d "ios-app" ]; then cd ios-app; fi
           mkdir -p Payload
-          cp -r build/ZeroCam.xcarchive/Products/Applications/ZeroCam.app Payload/
+          APP_PATH=$(find build -name "ZeroCam.app" -type d | head -n 1)
+          echo "ZeroCam.app localizado em: $APP_PATH"
+          cp -r "$APP_PATH" Payload/
           zip -qr ZeroCam.ipa Payload
 
       - name: Disponibilizar ZeroCam.ipa para Download

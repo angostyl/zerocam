@@ -9,7 +9,7 @@ struct ZeroCamApp: App {
             MainCameraView()
                 .environmentObject(cameraManager)
                 .preferredColorScheme(.dark)
-                .statusBar(hidden: true)
+                .statusBarHidden(true)
         }
     }
 }
