@@ -204,18 +204,21 @@ final class CameraManager: NSObject, ObservableObject {
                 targetZoom = (self.telephotoDevice != nil) ? 1.0 : 5.0
             }
 
-            guard let newDevice = targetDevice,
-                  let newInput = try? AVCaptureDeviceInput(device: newDevice) else { return }
+            guard let newDevice = targetDevice else { return }
 
             self.session.beginConfiguration()
-            if let oldInput = self.currentInput {
-                self.session.removeInput(oldInput)
-            }
+            
+            // Só troca o input se for um dispositivo físico diferente
+            if self.currentDevice != newDevice {
+                if let oldInput = self.currentInput {
+                    self.session.removeInput(oldInput)
+                }
 
-            if self.session.canAddInput(newInput) {
-                self.session.addInput(newInput)
-                self.currentInput = newInput
-                self.currentDevice = newDevice
+                if let newInput = try? AVCaptureDeviceInput(device: newDevice), self.session.canAddInput(newInput) {
+                    self.session.addInput(newInput)
+                    self.currentInput = newInput
+                    self.currentDevice = newDevice
+                }
             }
 
             do {
@@ -430,6 +433,11 @@ final class CameraManager: NSObject, ObservableObject {
             settings.isAutoVirtualDeviceFusionEnabled = false
             settings.isAutoRedEyeReductionEnabled = false
             settings.flashMode = self.flashMode
+
+            // Garante que o output da foto também está orientado para Retrato (.portrait)
+            if let photoConnection = self.photoOutput.connection(with: .video), photoConnection.isVideoOrientationSupported {
+                photoConnection.videoOrientation = .portrait
+            }
 
             DispatchQueue.main.async {
                 self.isCapturing = true

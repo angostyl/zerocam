@@ -4,7 +4,7 @@ import AVFoundation
 
 struct CameraPreviewView: UIViewRepresentable {
     let session: AVCaptureSession
-    let onTap: (CGPoint) -> Void
+    let onTap: (_ viewPoint: CGPoint, _ devicePoint: CGPoint) -> Void
 
     func makeUIView(context: Context) -> PreviewUIView {
         let view = PreviewUIView()
@@ -15,12 +15,14 @@ struct CameraPreviewView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: PreviewUIView, context: Context) {
-        // Nada a atualizar estaticamente
+        if uiView.videoPreviewLayer.session != session {
+            uiView.videoPreviewLayer.session = session
+        }
     }
 }
 
 final class PreviewUIView: UIView {
-    var onTap: ((CGPoint) -> Void)?
+    var onTap: ((_ viewPoint: CGPoint, _ devicePoint: CGPoint) -> Void)?
 
     override class var layerClass: AnyClass {
         AVCaptureVideoPreviewLayer.self
@@ -32,12 +34,29 @@ final class PreviewUIView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        setupLayer()
         setupGesture()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        setupLayer()
         setupGesture()
+    }
+
+    private func setupLayer() {
+        videoPreviewLayer.videoGravity = .resizeAspectFill
+        clipsToBounds = true
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        videoPreviewLayer.frame = bounds
+        
+        // Garante que a orientação da câmara no preview seja sempre Retrato (.portrait)
+        if let connection = videoPreviewLayer.connection, connection.isVideoOrientationSupported {
+            connection.videoOrientation = .portrait
+        }
     }
 
     private func setupGesture() {
@@ -47,9 +66,16 @@ final class PreviewUIView: UIView {
     }
 
     @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
-        let location = gesture.location(in: self)
-        // Converte o ponto do ecrã para o espaço normalizado (0.0 a 1.0) do sensor de captura
-        let pointOfInterest = videoPreviewLayer.captureDevicePointConverted(fromLayerPoint: location)
-        onTap?(pointOfInterest)
+        let locationInView = gesture.location(in: self)
+        
+        // Garante que o layer está orientado antes de converter
+        if let connection = videoPreviewLayer.connection, connection.isVideoOrientationSupported {
+            connection.videoOrientation = .portrait
+        }
+
+        // Converte para coordenadas normalizadas (0.0 a 1.0) do sensor AVFoundation
+        let devicePoint = videoPreviewLayer.captureDevicePointConverted(fromLayerPoint: locationInView)
+        
+        onTap?(locationInView, devicePoint)
     }
 }

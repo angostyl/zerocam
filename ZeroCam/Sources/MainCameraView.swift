@@ -7,6 +7,7 @@ struct MainCameraView: View {
     @State private var showingInfoSheet = false
     @State private var showingGallery = false
     @State private var selectedManualTab: Int = 0 // 0=ISO, 1=Shutter, 2=Focus, 3=WB
+    @State private var focusScreenLocation: CGPoint? = nil
 
     private let hapticImpact = UIImpactFeedbackGenerator(style: .medium)
     private let hapticLight = UIImpactFeedbackGenerator(style: .light)
@@ -26,9 +27,10 @@ struct MainCameraView: View {
 
                 // MARK: - Viewfinder Sensor 4:3
                 ZStack {
-                    CameraPreviewView(session: cameraManager.session) { normalizedPoint in
+                    CameraPreviewView(session: cameraManager.session) { viewPoint, devicePoint in
                         if cameraManager.controlMode == .auto {
-                            cameraManager.setFocusAndExposurePoint(normalizedPoint)
+                            focusScreenLocation = viewPoint
+                            cameraManager.setFocusAndExposurePoint(devicePoint)
                             hapticLight.impactOccurred()
                         }
                     }
@@ -39,13 +41,10 @@ struct MainCameraView: View {
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
 
-                    // Retículo de Foco (Modo Auto)
-                    if cameraManager.controlMode == .auto, cameraManager.isFocusing, let focusPoint = cameraManager.focusPoint {
+                    // Retículo de Foco com posição exata de toque
+                    if cameraManager.controlMode == .auto, cameraManager.isFocusing, let touchPoint = focusScreenLocation {
                         FocusReticleView()
-                            .position(
-                                x: focusPoint.x * UIScreen.main.bounds.width * 0.9,
-                                y: focusPoint.y * (UIScreen.main.bounds.width * 0.9 * (4.0 / 3.0))
-                            )
+                            .position(touchPoint)
                     }
 
                     // Seletor de Lentes (0.5x, 1x, 2x, 5x)
