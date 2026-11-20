@@ -418,3 +418,96 @@ struct ProTabButton: View {
         }
     }
 }
+
+// MARK: - Retículo Minimalista de Foco
+struct FocusReticleView: View {
+    @State private var scale: CGFloat = 1.3
+    @State private var opacity: Double = 1.0
+
+    var body: some View {
+        ZStack {
+            Rectangle()
+                .stroke(Color.yellow, lineWidth: 1.5)
+                .frame(width: 65, height: 65)
+
+            Circle()
+                .fill(Color.yellow)
+                .frame(width: 4, height: 4)
+        }
+        .scaleEffect(scale)
+        .opacity(opacity)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.25)) { scale = 1.0 }
+            withAnimation(.easeIn(duration: 0.4).delay(0.9)) { opacity = 0.0 }
+        }
+    }
+}
+
+// MARK: - Folha Explicativa das Definições Óticas
+struct ProcessZeroInfoSheet: View {
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Filosofia Ótica ZeroCam")
+                        .font(.title2.bold())
+                        .foregroundColor(.primary)
+
+                    Text("Ao contrário dos apps padrão, o ZeroCam captura direto do sensor com prioridade de velocidade (.speed), eliminando o empilhamento de frames do Smart HDR e o Deep Fusion.")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+
+                    Divider()
+
+                    FeatureInfoRow(
+                        icon: "camera.metering.matrix",
+                        title: "Objetiva 5x Nativa",
+                        description: "Acesso físico direto ao sensor de tetraprisma sem interpolação digital."
+                    )
+
+                    FeatureInfoRow(
+                        icon: "slider.horizontal.3",
+                        title: "Controlo PRO Manual",
+                        description: "Ajuste milimétrico de ISO, tempo de obturador, foco por posição de lente e balanço de brancos Kelvin."
+                    )
+
+                    FeatureInfoRow(
+                        icon: "film",
+                        title: "Receitas de Filme Analógico",
+                        description: "Simulação de emulsão analógica (Portra 400, Classic Chrome, Tri-X 400) com gravação de DNG Bayer puro."
+                    )
+                }
+                .padding(24)
+            }
+            .navigationTitle("Definições Óticas")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("OK") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+struct FeatureInfoRow: View {
+    let icon: String
+    let title: String
+    let description: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundColor(.yellow)
+                .frame(width: 28)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title).font(.subheadline.bold())
+                Text(description).font(.footnote).foregroundColor(.secondary)
+            }
+        }
+    }
+}
