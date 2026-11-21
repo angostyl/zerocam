@@ -5,6 +5,7 @@ import AVFoundation
 struct MainCameraView: View {
     @EnvironmentObject var cameraManager: CameraManager
     @State private var showingInfoSheet = false
+    @State private var showingRecipeSheet = false
     @State private var showingGallery = false
     @State private var selectedManualTab: Int = 0 // 0=ISO, 1=Shutter, 2=Focus, 3=WB
     @State private var focusScreenLocation: CGPoint? = nil
@@ -14,18 +15,19 @@ struct MainCameraView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            // Fundo OLED Black
+            AppleTheme.darkBg.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // MARK: - Barra Superior
+                // MARK: - Barra Superior (Safe Area Top)
                 topBar
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .frame(height: 50)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+                    .frame(height: 52)
 
-                Spacer()
+                Spacer(minLength: 6)
 
-                // MARK: - Viewfinder Sensor 4:3
+                // MARK: - Viewfinder Sensor 3:4 (Camada de Conteúdo Ótico)
                 ZStack {
                     CameraPreviewView(session: cameraManager.session) { viewPoint, devicePoint in
                         if cameraManager.controlMode == .auto {
@@ -34,34 +36,73 @@ struct MainCameraView: View {
                             hapticLight.impactOccurred()
                         }
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                     .aspectRatio(3.0 / 4.0, contentMode: .fit)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .stroke(Color.white.opacity(0.18), lineWidth: 1)
                     )
 
-                    // Retículo de Foco com posição exata de toque
+                    // Regra dos Terços (Grelha subtil 10%)
+                    viewfinderRuleOfThirds
+
+                    // Nível Ótico de Horizonte (Apple Camera HIG)
+                    horizonLevelIndicator
+
+                    // Badge de Ótica no Topo Esquerdo: 24mm ƒ/1.78 ÓTICO
+                    VStack {
+                        HStack {
+                            Text(currentLensFocalDisplay)
+                                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                .foregroundColor(Color.white.opacity(0.9))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Color.black.opacity(0.65))
+                                .clipShape(Capsule())
+                                .overlay(
+                                    Capsule().stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                                )
+                                .padding(.leading, 14)
+                                .padding(.top, 14)
+                            Spacer()
+
+                            // Em modo PRO: Spot Metering Indicator
+                            if cameraManager.controlMode == .manual {
+                                Text("SPOT 18%")
+                                    .font(.system(size: 9, weight: .black, design: .monospaced))
+                                    .foregroundColor(AppleTheme.yellow)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.black.opacity(0.65))
+                                    .clipShape(Capsule())
+                                    .padding(.trailing, 14)
+                                    .padding(.top, 14)
+                            }
+                        }
+                        Spacer()
+                    }
+
+                    // Retículo de Foco com Amarelo Kodak na posição exata de toque
                     if cameraManager.controlMode == .auto, cameraManager.isFocusing, let touchPoint = focusScreenLocation {
                         FocusReticleView()
                             .position(touchPoint)
                     }
 
-                    // Seletor de Lentes (0.5x, 1x, 2x, 5x)
+                    // Seletor de Lentes Liquid Glass Flutuante (.5 • 1x • 2 • 5)
                     VStack {
                         Spacer()
                         lensSelectorBar
-                            .padding(.bottom, 12)
+                            .padding(.bottom, 14)
                     }
                 }
                 .padding(.horizontal, 16)
 
-                Spacer()
+                Spacer(minLength: 6)
 
-                // MARK: - Painel de Controlo (Auto EV vs Pro Manual)
+                // MARK: - Painel de Controlo Inferior (Zona Ergonómica de Polegar)
                 if cameraManager.controlMode == .auto {
                     autoExposureBar
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, 20)
                         .padding(.vertical, 6)
                 } else {
                     proControlsDrawer
@@ -69,10 +110,10 @@ struct MainCameraView: View {
                         .padding(.vertical, 4)
                 }
 
-                // MARK: - Barra Inferior de Disparo e Galeria
+                // MARK: - Barra Inferior de Disparo, Galeria e RAW Badge
                 bottomBar
                     .padding(.horizontal, 24)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 16)
             }
 
             // Flash visual do obturador
@@ -82,6 +123,10 @@ struct MainCameraView: View {
                     .transition(.opacity)
             }
         }
+        .sheet(isPresented: $showingRecipeSheet) {
+            FilmRecipesSheetView()
+                .environmentObject(cameraManager)
+        }
         .sheet(isPresented: $showingInfoSheet) {
             ProcessZeroInfoSheet()
         }
@@ -90,121 +135,158 @@ struct MainCameraView: View {
         }
     }
 
-    // MARK: - Barra Superior
+    // MARK: - Barra Superior Liquid Glass
     private var topBar: some View {
         HStack(spacing: 8) {
-            // Seletor de Filtro de Filme
-            Menu {
-                ForEach(FilmRecipe.allCases) { recipe in
-                    Button(action: {
-                        cameraManager.selectedRecipe = recipe
-                        hapticLight.impactOccurred()
-                    }) {
-                        HStack {
-                            Text(recipe.rawValue)
-                            if cameraManager.selectedRecipe == recipe {
-                                Image(systemName: "checkmark")
-                            }
-                        }
-                    }
-                }
-            } label: {
-                HStack(spacing: 6) {
-                    Circle()
-                        .fill(Color.yellow)
-                        .frame(width: 7, height: 7)
-                    Text(cameraManager.selectedRecipe.badgeText)
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white)
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundColor(.yellow)
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(Color.white.opacity(0.12))
-                .clipShape(Capsule())
-            }
-
-            Spacer()
-
-            // Toggle AUTO / PRO Manual
-            HStack(spacing: 2) {
-                ForEach(CameraControlMode.allCases) { mode in
-                    Button(action: {
-                        cameraManager.setControlMode(mode)
-                        hapticLight.impactOccurred()
-                    }) {
-                        Text(mode.rawValue)
-                            .font(.system(size: 10, weight: .bold, design: .monospaced))
-                            .foregroundColor(cameraManager.controlMode == mode ? .black : .white.opacity(0.7))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(cameraManager.controlMode == mode ? Color.yellow : Color.clear)
-                            .clipShape(Capsule())
-                    }
-                }
-            }
-            .padding(2)
-            .background(Color.white.opacity(0.1))
-            .clipShape(Capsule())
-
-            // Botão Flash
+            // Botão Flash (.buttonStyle(.glass))
             Button(action: {
                 cameraManager.toggleFlash()
                 hapticLight.impactOccurred()
             }) {
                 Image(systemName: flashIconName)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(cameraManager.flashMode == .off ? .white.opacity(0.7) : .yellow)
-                    .frame(width: 34, height: 34)
-                    .background(Color.white.opacity(0.1))
-                    .clipShape(Circle())
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(cameraManager.flashMode == .off ? AppleTheme.labelMuted : AppleTheme.yellow)
+                    .frame(width: 44, height: 44)
+                    .liquidGlass(isPill: false)
             }
 
-            // Info
+            // Seletor de Receita de Filme Liquid Glass (Abre a Bottom Sheet nativa)
+            Button(action: {
+                showingRecipeSheet = true
+                hapticLight.impactOccurred()
+            }) {
+                HStack(spacing: 7) {
+                    Circle()
+                        .fill(AppleTheme.yellow)
+                        .frame(width: 7, height: 7)
+                    Text(cameraManager.selectedRecipe.badgeText)
+                        .font(.system(size: 11.5, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(AppleTheme.yellow)
+                }
+                .padding(.horizontal, 14)
+                .frame(height: 42)
+                .liquidGlass(isPill: true)
+            }
+
+            Spacer()
+
+            // Segmented Control AUTO / PRO Liquid Glass
+            HStack(spacing: 2) {
+                ForEach(CameraControlMode.allCases) { mode in
+                    Button(action: {
+                        withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
+                            cameraManager.setControlMode(mode)
+                        }
+                        hapticLight.impactOccurred()
+                    }) {
+                        Text(mode.rawValue)
+                            .font(.system(size: 10.5, weight: .bold, design: .monospaced))
+                            .foregroundColor(cameraManager.controlMode == mode ? .black : AppleTheme.labelMuted)
+                            .frame(width: 48, height: 32)
+                            .background(
+                                Group {
+                                    if cameraManager.controlMode == mode {
+                                        Capsule().fill(AppleTheme.yellow)
+                                    } else {
+                                        Color.clear
+                                    }
+                                }
+                            )
+                    }
+                }
+            }
+            .padding(3)
+            .liquidGlass(isPill: true)
+
+            // Botão Info (.buttonStyle(.glass))
             Button(action: { showingInfoSheet = true }) {
                 Image(systemName: "info.circle")
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(.white.opacity(0.7))
-                    .frame(width: 34, height: 34)
-                    .background(Color.white.opacity(0.1))
-                    .clipShape(Circle())
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(Color.white.opacity(0.85))
+                    .frame(width: 44, height: 44)
+                    .liquidGlass(isPill: false)
             }
         }
     }
 
-    // MARK: - Seletor de Lentes (0.5x, 1x, 2x, 5x)
+    // MARK: - Grelha Regra dos Terços
+    private var viewfinderRuleOfThirds: some View {
+        GeometryReader { proxy in
+            let w = proxy.size.width
+            let h = proxy.size.height
+            Path { path in
+                // Linhas verticais
+                path.move(to: CGPoint(x: w / 3, y: 0))
+                path.addLine(to: CGPoint(x: w / 3, y: h))
+                path.move(to: CGPoint(x: 2 * w / 3, y: 0))
+                path.addLine(to: CGPoint(x: 2 * w / 3, y: h))
+                // Linhas horizontais
+                path.move(to: CGPoint(x: 0, y: h / 3))
+                path.addLine(to: CGPoint(x: w, y: h / 3))
+                path.move(to: CGPoint(x: 0, y: 2 * h / 3))
+                path.addLine(to: CGPoint(x: w, y: 2 * h / 3))
+            }
+            .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
+        }
+        .allowsHitTesting(false)
+    }
+
+    // MARK: - Indicador de Nível de Horizonte Apple
+    private var horizonLevelIndicator: some View {
+        HStack(spacing: 8) {
+            Rectangle()
+                .fill(AppleTheme.yellow)
+                .frame(width: 24, height: 1.5)
+            Circle()
+                .fill(AppleTheme.yellow)
+                .frame(width: 3, height: 3)
+            Rectangle()
+                .fill(AppleTheme.yellow)
+                .frame(width: 24, height: 1.5)
+        }
+        .opacity(0.7)
+        .allowsHitTesting(false)
+    }
+
+    // MARK: - Seletor de Lentes Liquid Glass (.5 • 1x • 2 • 5)
     private var lensSelectorBar: some View {
         HStack(spacing: 6) {
             ForEach(cameraManager.availableLenses) { lens in
                 Button(action: {
-                    cameraManager.switchLens(to: lens)
+                    withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
+                        cameraManager.switchLens(to: lens)
+                    }
                     hapticLight.impactOccurred()
                 }) {
-                    Text(lens.rawValue)
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    Text(lensDisplay(for: lens))
+                        .font(.system(size: 11.5, weight: .bold, design: .monospaced))
                         .foregroundColor(cameraManager.currentLens == lens ? .black : .white)
-                        .frame(width: 44, height: 28)
-                        .background(cameraManager.currentLens == lens ? Color.yellow : Color.black.opacity(0.6))
-                        .clipShape(Capsule())
-                        .overlay(
-                            Capsule().stroke(Color.white.opacity(0.2), lineWidth: 1)
+                        .frame(width: 44, height: 30)
+                        .background(
+                            Group {
+                                if cameraManager.currentLens == lens {
+                                    Circle().fill(AppleTheme.yellow)
+                                } else {
+                                    Circle().fill(Color.black.opacity(0.5))
+                                }
+                            }
                         )
                 }
             }
         }
-        .padding(4)
-        .background(Color.black.opacity(0.45))
-        .clipShape(Capsule())
+        .padding(5)
+        .liquidGlass(isPill: true)
     }
 
-    // MARK: - Controlo Auto EV
+    // MARK: - Controlo Auto EV com Liquid Glass
     private var autoExposureBar: some View {
-        HStack {
+        HStack(spacing: 12) {
             Text("EV")
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
-                .foregroundColor(.white.opacity(0.6))
+                .font(.system(size: 11.5, weight: .black, design: .monospaced))
+                .foregroundColor(AppleTheme.labelMuted)
 
             Slider(
                 value: Binding(
@@ -214,154 +296,182 @@ struct MainCameraView: View {
                 in: -2.0...2.0,
                 step: 0.1
             )
-            .accentColor(.yellow)
+            .accentColor(AppleTheme.yellow)
 
             Text(String(format: "%+.1f", cameraManager.exposureBias))
-                .font(.system(size: 12, weight: .bold, design: .monospaced))
-                .foregroundColor(cameraManager.exposureBias == 0 ? .white.opacity(0.7) : .yellow)
-                .frame(width: 44, alignment: .trailing)
+                .font(.system(size: 13, weight: .bold, design: .monospaced))
+                .foregroundColor(cameraManager.exposureBias == 0 ? Color.white.opacity(0.8) : AppleTheme.yellow)
+                .frame(width: 48, alignment: .trailing)
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .liquidGlass(cornerRadius: 18)
     }
 
-    // MARK: - Gaveta de Controlos PRO Manual
+    // MARK: - Gaveta de Controlos PRO Manual (Liquid Glass Único - Regra 4.2)
     private var proControlsDrawer: some View {
-        VStack(spacing: 8) {
-            // Seletor de Parâmetro PRO
-            HStack(spacing: 6) {
+        VStack(spacing: 10) {
+            // Abas de Parâmetro PRO (Preenchimentos Sólidos dentro de Glass)
+            HStack(spacing: 8) {
                 ProTabButton(title: "ISO", isSelected: selectedManualTab == 0) { selectedManualTab = 0 }
                 ProTabButton(title: "OBT", isSelected: selectedManualTab == 1) { selectedManualTab = 1 }
                 ProTabButton(title: "FOCO", isSelected: selectedManualTab == 2) { selectedManualTab = 2 }
                 ProTabButton(title: "WB", isSelected: selectedManualTab == 3) { selectedManualTab = 3 }
             }
 
-            // Slider Dinâmico Conforme Aba Ativa
-            if selectedManualTab == 0 {
-                // ISO (50 a 3200)
-                HStack {
-                    Text("ISO")
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.6))
-                    Slider(
-                        value: Binding(
-                            get: { Double(cameraManager.manualISO) },
-                            set: { cameraManager.setManualISO(Float($0)) }
-                        ),
-                        in: 50...3200,
-                        step: 25
-                    )
-                    .accentColor(.yellow)
-                    Text("\(Int(cameraManager.manualISO))")
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        .foregroundColor(.yellow)
-                        .frame(width: 50, alignment: .trailing)
-                }
-            } else if selectedManualTab == 1 {
-                // Shutter Speed (Índices padronizados)
-                HStack {
-                    Text("SEC")
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.6))
-                    Slider(
-                        value: Binding(
-                            get: { Double(cameraManager.manualShutterIndex) },
-                            set: { cameraManager.setManualShutterIndex(Int($0)) }
-                        ),
-                        in: 0...Double(CameraManager.shutterSpeeds.count - 1),
-                        step: 1
-                    )
-                    .accentColor(.yellow)
-                    Text(CameraManager.shutterSpeeds[cameraManager.manualShutterIndex].display)
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        .foregroundColor(.yellow)
-                        .frame(width: 60, alignment: .trailing)
-                }
-            } else if selectedManualTab == 2 {
-                // Foco Manual (0.0 Macro a 1.0 Infinito)
-                HStack {
-                    Text("MACRO")
-                        .font(.system(size: 9, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.6))
-                    Slider(
-                        value: Binding(
-                            get: { Double(cameraManager.manualFocus) },
-                            set: { cameraManager.setManualFocus(Float($0)) }
-                        ),
-                        in: 0.0...1.0,
-                        step: 0.02
-                    )
-                    .accentColor(.yellow)
-                    Text("INF")
-                        .font(.system(size: 9, weight: .bold, design: .monospaced))
-                        .foregroundColor(.yellow)
-                }
-            } else if selectedManualTab == 3 {
-                // Balanço de Brancos Kelvin (2500K a 8500K)
-                HStack {
-                    Text("WB")
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.6))
-                    Slider(
-                        value: Binding(
-                            get: { Double(cameraManager.manualKelvin) },
-                            set: { cameraManager.setManualKelvin(Float($0)) }
-                        ),
-                        in: 2500...8500,
-                        step: 100
-                    )
-                    .accentColor(.yellow)
-                    Text("\(Int(cameraManager.manualKelvin))K")
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        .foregroundColor(.yellow)
-                        .frame(width: 58, alignment: .trailing)
+            // Slider e Leitura Conforme Aba
+            Group {
+                if selectedManualTab == 0 {
+                    HStack {
+                        Text("ISO \(Int(cameraManager.manualISO))")
+                            .font(.system(size: 15, weight: .bold, design: .monospaced))
+                            .foregroundColor(AppleTheme.yellow)
+                            .frame(width: 80, alignment: .leading)
+
+                        Slider(
+                            value: Binding(
+                                get: { Double(cameraManager.manualISO) },
+                                set: { cameraManager.setManualISO(Float($0)) }
+                            ),
+                            in: 50...3200,
+                            step: 25
+                        )
+                        .accentColor(AppleTheme.yellow)
+
+                        Text("3200")
+                            .font(.system(size: 9.5, weight: .bold, design: .monospaced))
+                            .foregroundColor(AppleTheme.labelMuted)
+                    }
+                } else if selectedManualTab == 1 {
+                    HStack {
+                        Text(CameraManager.shutterSpeeds[cameraManager.manualShutterIndex].display)
+                            .font(.system(size: 15, weight: .bold, design: .monospaced))
+                            .foregroundColor(AppleTheme.yellow)
+                            .frame(width: 80, alignment: .leading)
+
+                        Slider(
+                            value: Binding(
+                                get: { Double(cameraManager.manualShutterIndex) },
+                                set: { cameraManager.setManualShutterIndex(Int($0)) }
+                            ),
+                            in: 0...Double(CameraManager.shutterSpeeds.count - 1),
+                            step: 1
+                        )
+                        .accentColor(AppleTheme.yellow)
+
+                        Text("1s")
+                            .font(.system(size: 9.5, weight: .bold, design: .monospaced))
+                            .foregroundColor(AppleTheme.labelMuted)
+                    }
+                } else if selectedManualTab == 2 {
+                    HStack {
+                        Text("MACRO")
+                            .font(.system(size: 9.5, weight: .bold, design: .monospaced))
+                            .foregroundColor(AppleTheme.labelMuted)
+
+                        Slider(
+                            value: Binding(
+                                get: { Double(cameraManager.manualFocus) },
+                                set: { cameraManager.setManualFocus(Float($0)) }
+                            ),
+                            in: 0.0...1.0,
+                            step: 0.02
+                        )
+                        .accentColor(AppleTheme.yellow)
+
+                        Text("INF")
+                            .font(.system(size: 9.5, weight: .bold, design: .monospaced))
+                            .foregroundColor(AppleTheme.yellow)
+                    }
+                } else if selectedManualTab == 3 {
+                    HStack {
+                        Text("\(Int(cameraManager.manualKelvin))K")
+                            .font(.system(size: 15, weight: .bold, design: .monospaced))
+                            .foregroundColor(AppleTheme.yellow)
+                            .frame(width: 80, alignment: .leading)
+
+                        Slider(
+                            value: Binding(
+                                get: { Double(cameraManager.manualKelvin) },
+                                set: { cameraManager.setManualKelvin(Float($0)) }
+                            ),
+                            in: 2500...8500,
+                            step: 100
+                        )
+                        .accentColor(AppleTheme.yellow)
+
+                        Text("8500K")
+                            .font(.system(size: 9.5, weight: .bold, design: .monospaced))
+                            .foregroundColor(AppleTheme.labelMuted)
+                    }
                 }
             }
+
+            // Telemetria Monocadência
+            Text("1/500s  •  ƒ/1.78  •  24mm Ótico  •  5600K")
+                .font(.system(size: 10.5, weight: .bold, design: .monospaced))
+                .foregroundColor(Color.white.opacity(0.8))
         }
-        .padding(10)
-        .background(Color.white.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(14)
+        .liquidGlass(cornerRadius: 22)
     }
 
-    // MARK: - Barra Inferior
+    // MARK: - Barra Inferior com Obturador Mecânico Liquid Glass Prominent
     private var bottomBar: some View {
         HStack(alignment: .center) {
-            // Miniatura da Galeria (Abre a galeria in-app!)
+            // Miniatura da Galeria com RAW Tag
             Button(action: {
                 showingGallery = true
                 hapticLight.impactOccurred()
             }) {
-                Group {
+                ZStack(alignment: .bottomLeading) {
                     if let thumb = cameraManager.lastCapturedThumbnail {
                         Image(uiImage: thumb)
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 50, height: 50)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.white.opacity(0.4), lineWidth: 1.5)
-                            )
+                            .frame(width: 54, height: 54)
+                            .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
                     } else {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.white.opacity(0.1))
-                            .frame(width: 50, height: 50)
+                        RoundedRectangle(cornerRadius: 15, style: .continuous)
+                            .fill(AppleTheme.gray6)
+                            .frame(width: 54, height: 54)
                             .overlay(
                                 Image(systemName: "photo.stack")
                                     .font(.system(size: 20))
-                                    .foregroundColor(.white.opacity(0.4))
+                                    .foregroundColor(AppleTheme.labelMuted)
                             )
                     }
+
+                    // Badge RAW
+                    Text("RAW")
+                        .font(.system(size: 8, weight: .black))
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 2)
+                        .background(AppleTheme.yellow)
+                        .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                        .padding(4)
                 }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15, style: .continuous)
+                        .stroke(AppleTheme.gray4, lineWidth: 1)
+                )
             }
             .frame(width: 60)
 
             Spacer()
 
-            // Disparador Obturador
+            // Disparador Obturador Mecânico (.buttonStyle(.glassProminent))
             Button(action: {
                 hapticImpact.impactOccurred()
                 cameraManager.capturePhoto()
             }) {
                 ZStack {
+                    // Halo Especular de Vidro Líquido
+                    Circle()
+                        .stroke(AppleTheme.glassSpecularBorder, lineWidth: 2)
+                        .frame(width: 82, height: 82)
+
                     Circle()
                         .stroke(Color.white, lineWidth: 3.5)
                         .frame(width: 74, height: 74)
@@ -377,14 +487,14 @@ struct MainCameraView: View {
 
             Spacer()
 
-            // Status Badge
+            // Status Badge Densitométrico
             VStack(spacing: 2) {
                 Text(cameraManager.selectedRecipe.badgeText)
-                    .font(.system(size: 10, weight: .bold, design: .monospaced))
-                    .foregroundColor(.yellow)
+                    .font(.system(size: 11, weight: .black, design: .monospaced))
+                    .foregroundColor(AppleTheme.yellow)
                 Text("14-BIT RAW")
                     .font(.system(size: 8, weight: .bold, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(AppleTheme.labelMuted)
             }
             .frame(width: 60)
         }
@@ -398,8 +508,27 @@ struct MainCameraView: View {
         @unknown default: return "bolt.slash.fill"
         }
     }
+
+    private var currentLensFocalDisplay: String {
+        switch cameraManager.currentLens {
+        case .ultraWide: return "13mm • ƒ/2.2 ÓTICO"
+        case .wide: return "24mm • ƒ/1.78 ÓTICO"
+        case .telephoto2x: return "48mm • ƒ/1.78 ÓTICO"
+        case .telephoto5x: return "120mm • ƒ/2.8 ÓTICO"
+        }
+    }
+
+    private func lensDisplay(for lens: CameraLens) -> String {
+        switch lens {
+        case .ultraWide: return ".5"
+        case .wide: return "1x"
+        case .telephoto2x: return "2"
+        case .telephoto5x: return "5"
+        }
+    }
 }
 
+// Botão de Aba Manual Sólido (Regra 4.2 HIG: Preenchimento Sólido para evitar Glass-on-Glass)
 struct ProTabButton: View {
     let title: String
     let isSelected: Bool
@@ -408,105 +537,13 @@ struct ProTabButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 10, weight: .bold, design: .monospaced))
-                .foregroundColor(isSelected ? .black : .white.opacity(0.7))
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .foregroundColor(isSelected ? .black : Color.white.opacity(0.8))
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 5)
-                .background(isSelected ? Color.yellow : Color.white.opacity(0.08))
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .frame(height: 34)
+                .background(isSelected ? AppleTheme.yellow : AppleTheme.gray6)
+                .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
         }
-    }
-}
-
-// MARK: - Retículo Minimalista de Foco
-struct FocusReticleView: View {
-    @State private var scale: CGFloat = 1.3
-    @State private var opacity: Double = 1.0
-
-    var body: some View {
-        ZStack {
-            Rectangle()
-                .stroke(Color.yellow, lineWidth: 1.5)
-                .frame(width: 65, height: 65)
-
-            Circle()
-                .fill(Color.yellow)
-                .frame(width: 4, height: 4)
-        }
-        .scaleEffect(scale)
-        .opacity(opacity)
-        .onAppear {
-            withAnimation(.easeOut(duration: 0.25)) { scale = 1.0 }
-            withAnimation(.easeIn(duration: 0.4).delay(0.9)) { opacity = 0.0 }
-        }
-    }
-}
-
-// MARK: - Folha Explicativa das Definições Óticas
-struct ProcessZeroInfoSheet: View {
-    @Environment(\.dismiss) var dismiss
-
-    var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Filosofia Ótica ZeroCam")
-                        .font(.title2.bold())
-                        .foregroundColor(.primary)
-
-                    Text("Ao contrário dos apps padrão, o ZeroCam captura direto do sensor com prioridade de velocidade (.speed), eliminando o empilhamento de frames do Smart HDR e o Deep Fusion.")
-                        .font(.body)
-                        .foregroundColor(.secondary)
-
-                    Divider()
-
-                    FeatureInfoRow(
-                        icon: "camera.metering.matrix",
-                        title: "Objetiva 5x Nativa",
-                        description: "Acesso físico direto ao sensor de tetraprisma sem interpolação digital."
-                    )
-
-                    FeatureInfoRow(
-                        icon: "slider.horizontal.3",
-                        title: "Controlo PRO Manual",
-                        description: "Ajuste milimétrico de ISO, tempo de obturador, foco por posição de lente e balanço de brancos Kelvin."
-                    )
-
-                    FeatureInfoRow(
-                        icon: "film",
-                        title: "Receitas de Filme Analógico",
-                        description: "Simulação de emulsão analógica (Portra 400, Classic Chrome, Tri-X 400) com gravação de DNG Bayer puro."
-                    )
-                }
-                .padding(24)
-            }
-            .navigationTitle("Definições Óticas")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("OK") { dismiss() }
-                }
-            }
-        }
-    }
-}
-
-struct FeatureInfoRow: View {
-    let icon: String
-    let title: String
-    let description: String
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 14) {
-            Image(systemName: icon)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(.yellow)
-                .frame(width: 28)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(title).font(.subheadline.bold())
-                Text(description).font(.footnote).foregroundColor(.secondary)
-            }
-        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
