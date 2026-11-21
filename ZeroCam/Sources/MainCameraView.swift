@@ -147,7 +147,7 @@ struct MainCameraView: View {
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(cameraManager.flashMode == .off ? AppleTheme.labelMuted : AppleTheme.yellow)
                     .frame(width: 44, height: 44)
-                    .liquidGlass(isPill: false)
+                    .liquidGlass(isCircle: true)
             }
 
             // Seletor de Receita de Filme Liquid Glass (Abre a Bottom Sheet nativa)
@@ -207,7 +207,7 @@ struct MainCameraView: View {
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(Color.white.opacity(0.85))
                     .frame(width: 44, height: 44)
-                    .liquidGlass(isPill: false)
+                    .liquidGlass(isCircle: true)
             }
         }
     }
@@ -218,16 +218,15 @@ struct MainCameraView: View {
             let w = proxy.size.width
             let h = proxy.size.height
             Path { path in
-                // Linhas verticais
-                path.move(to: CGPoint(x: w / 3, y: 0))
-                path.addLine(to: CGPoint(x: w / 3, y: h))
-                path.move(to: CGPoint(x: 2 * w / 3, y: 0))
-                path.addLine(to: CGPoint(x: 2 * w / 3, y: h))
-                // Linhas horizontais
-                path.move(to: CGPoint(x: 0, y: h / 3))
-                path.addLine(to: CGPoint(x: w, y: h / 3))
-                path.move(to: CGPoint(x: 0, y: 2 * h / 3))
-                path.addLine(to: CGPoint(x: w, y: 2 * h / 3))
+                path.move(to: CGPoint(x: w / 3.0, y: 0))
+                path.addLine(to: CGPoint(x: w / 3.0, y: h))
+                path.move(to: CGPoint(x: (2.0 * w) / 3.0, y: 0))
+                path.addLine(to: CGPoint(x: (2.0 * w) / 3.0, y: h))
+
+                path.move(to: CGPoint(x: 0, y: h / 3.0))
+                path.addLine(to: CGPoint(x: w, y: h / 3.0))
+                path.move(to: CGPoint(x: 0, y: (2.0 * h) / 3.0))
+                path.addLine(to: CGPoint(x: w, y: (2.0 * h) / 3.0))
             }
             .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
         }
@@ -545,5 +544,100 @@ struct ProTabButton: View {
                 .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
         }
         .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - Retículo Minimalista de Foco (Apple / Leica style)
+struct FocusReticleView: View {
+    @State private var scale: CGFloat = 1.3
+    @State private var opacity: Double = 1.0
+
+    var body: some View {
+        ZStack {
+            Rectangle()
+                .stroke(AppleTheme.yellow, lineWidth: 1.5)
+                .frame(width: 65, height: 65)
+
+            Circle()
+                .fill(AppleTheme.yellow)
+                .frame(width: 4, height: 4)
+        }
+        .scaleEffect(scale)
+        .opacity(opacity)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.25)) { scale = 1.0 }
+            withAnimation(.easeIn(duration: 0.4).delay(0.9)) { opacity = 0.0 }
+        }
+    }
+}
+
+// MARK: - Folha Explicativa das Definições Óticas
+struct ProcessZeroInfoSheet: View {
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    Text("Filosofia Ótica ZeroCam")
+                        .font(.title2.bold())
+                        .foregroundColor(.primary)
+
+                    Text("Ao contrário dos algoritmos padrão da Apple, o ZeroCam captura direto do sensor com prioridade instantânea (.speed), eliminando o empilhamento de frames do Smart HDR e o Deep Fusion artificial.")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+
+                    Divider()
+
+                    FeatureInfoRow(
+                        icon: "camera.metering.matrix",
+                        title: "Objetivas Óticas Reais",
+                        description: "Acesso físico direto aos sensores (0.5x, 1x, 2x, 5x) sem interpolação digital híbrida."
+                    )
+
+                    FeatureInfoRow(
+                        icon: "slider.horizontal.3",
+                        title: "Controlo PRO Manual",
+                        description: "Ajuste milimétrico de ISO, tempo de obturador, foco por posição de lente e balanço de brancos Kelvin."
+                    )
+
+                    FeatureInfoRow(
+                        icon: "film",
+                        title: "Receitas de Filme Analógico",
+                        description: "Simulação de emulsão analógica (Portra 400, Classic Chrome, Tri-X 400) com gravação de DNG Bayer puro."
+                    )
+                }
+                .padding(24)
+            }
+            .navigationTitle("Definições Óticas")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("OK") { dismiss() }
+                        .font(.headline)
+                        .foregroundColor(AppleTheme.yellow)
+                }
+            }
+        }
+    }
+}
+
+struct FeatureInfoRow: View {
+    let icon: String
+    let title: String
+    let description: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundColor(AppleTheme.yellow)
+                .frame(width: 28)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title).font(.subheadline.bold())
+                Text(description).font(.footnote).foregroundColor(.secondary)
+            }
+        }
     }
 }

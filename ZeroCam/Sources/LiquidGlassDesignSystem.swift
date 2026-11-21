@@ -29,48 +29,42 @@ enum AppleTheme {
 struct LiquidGlassModifier: ViewModifier {
     var cornerRadius: CGFloat = 20
     var isPill: Bool = false
+    var isCircle: Bool = false
 
     func body(content: Content) -> some View {
-        content
-            .background(
-                ZStack {
-                    // Base translúcida com ultraThinMaterial
-                    Color(red: 0.15, green: 0.15, blue: 0.18).opacity(0.72)
-                }
-            )
-            .clipShape(shape)
-            .overlay(
-                shape
-                    .stroke(AppleTheme.glassSpecularBorder, lineWidth: 1)
-            )
-            .shadow(color: Color.black.opacity(0.4), radius: 12, x: 0, y: 6)
-    }
-
-    @ViewBuilder
-    private var shape: some Shape {
-        if isPill {
-            AnyShape(Capsule())
+        if isCircle {
+            content
+                .background(Color(red: 0.15, green: 0.15, blue: 0.18).opacity(0.72))
+                .clipShape(Circle())
+                .overlay(
+                    Circle()
+                        .stroke(AppleTheme.glassSpecularBorder, lineWidth: 1)
+                )
+                .shadow(color: Color.black.opacity(0.4), radius: 10, x: 0, y: 5)
+        } else if isPill {
+            content
+                .background(Color(red: 0.15, green: 0.15, blue: 0.18).opacity(0.72))
+                .clipShape(Capsule())
+                .overlay(
+                    Capsule()
+                        .stroke(AppleTheme.glassSpecularBorder, lineWidth: 1)
+                )
+                .shadow(color: Color.black.opacity(0.4), radius: 10, x: 0, y: 5)
         } else {
-            AnyShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            content
+                .background(Color(red: 0.15, green: 0.15, blue: 0.18).opacity(0.72))
+                .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .stroke(AppleTheme.glassSpecularBorder, lineWidth: 1)
+                )
+                .shadow(color: Color.black.opacity(0.4), radius: 10, x: 0, y: 5)
         }
     }
 }
 
-// Type-erased Shape auxiliar
-struct AnyShape: Shape {
-    private let _path: (CGRect) -> Path
-
-    init<S: Shape>(_ shape: S) {
-        _path = shape.path(in:)
-    }
-
-    func path(in rect: CGRect) -> Path {
-        _path(rect)
-    }
-}
-
 extension View {
-    func liquidGlass(cornerRadius: CGFloat = 20, isPill: Bool = false) -> some View {
-        modifier(LiquidGlassModifier(cornerRadius: cornerRadius, isPill: isPill))
+    func liquidGlass(cornerRadius: CGFloat = 20, isPill: Bool = false, isCircle: Bool = false) -> some View {
+        modifier(LiquidGlassModifier(cornerRadius: cornerRadius, isPill: isPill, isCircle: isCircle))
     }
 }
