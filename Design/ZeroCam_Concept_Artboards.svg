@@ -1,0 +1,446 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1840 1160" width="1840" height="1160" style="background:#0b0b0d; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;">
+  <defs>
+    <!-- Filtros de sombra e glow -->
+    <filter id="phoneShadow" x="-10%" y="-5%" width="120%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#000000" flood-opacity="0.7" />
+    </filter>
+    <filter id="yellowGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFDD55" />
+      <stop offset="100%" stop-color="#F5C518" />
+    </linearGradient>
+    <linearGradient id="shutterRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#D0D0D5" />
+    </linearGradient>
+    <linearGradient id="lensGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c1d22" />
+      <stop offset="100%" stop-color="#111215" />
+    </linearGradient>
+  </defs>
+
+  <!-- ======================================================== -->
+  <!-- HEADER BANNER & DESIGN TOKENS -->
+  <!-- ======================================================== -->
+  <g id="Header-Banner" transform="translate(60, 40)">
+    <rect width="1720" height="136" rx="20" fill="#141417" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1.5" />
+    <rect x="32" y="24" width="220" height="24" rx="12" fill="#F5C518" fill-opacity="0.15" />
+    <text x="42" y="40" fill="#F5C518" font-size="11" font-weight="700" letter-spacing="1.5">IOS NATIVE ARCHITECTURE</text>
+    
+    <text x="32" y="80" fill="#ffffff" font-size="28" font-weight="800" letter-spacing="-0.5">ZeroCam — Pure Optical Film Camera</text>
+    <text x="32" y="108" fill="#888892" font-size="14" font-weight="400">Captura Mono-Frame Bayer RAW sem Smart HDR da Apple • Simulações Densitométricas Reais (Portra 400, Classic Chrome, Tri-X 400)</text>
+
+    <!-- Badges à direita -->
+    <g transform="translate(1360, 36)">
+      <rect width="150" height="32" rx="16" fill="#1f1f24" stroke="#F5C518" stroke-opacity="0.4" />
+      <circle cx="18" cy="16" r="4" fill="#F5C518" />
+      <text x="30" y="21" fill="#ffffff" font-size="11" font-weight="700">14-BIT RAW DNG</text>
+
+      <rect x="165" y="0" width="150" height="32" rx="16" fill="#1f1f24" stroke="#ffffff" stroke-opacity="0.15" />
+      <circle cx="183" cy="16" r="4" fill="#00E676" />
+      <text x="195" y="21" fill="#ffffff" font-size="11" font-weight="700">ZERO AI HDR</text>
+    </g>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- ECRÃ 1: MODO AUTO EV (VIEWFINDER 3:4) -->
+  <!-- ======================================================== -->
+  <g id="Screen-1-AutoEV" transform="translate(60, 210)" filter="url(#phoneShadow)">
+    <text x="12" y="-12" fill="#888892" font-size="12" font-weight="700" letter-spacing="1">01 · AUTO EV MODE</text>
+    <!-- Moldura iPhone 16 Pro -->
+    <rect width="393" height="852" rx="52" fill="#000000" stroke="#333338" stroke-width="2.5" />
+
+    <!-- Dynamic Island -->
+    <rect x="134" y="14" width="125" height="34" rx="17" fill="#000000" stroke="#222" stroke-width="1" />
+    <circle cx="240" cy="31" r="5" fill="#111" />
+
+    <!-- Status Bar -->
+    <text x="38" y="36" fill="#ffffff" font-size="14" font-weight="600">9:41</text>
+    <text x="312" y="36" fill="#ffffff" font-size="12" font-weight="600">5G  100%</text>
+
+    <!-- Top Bar -->
+    <g transform="translate(20, 60)">
+      <!-- Badge Receita -->
+      <rect width="112" height="32" rx="16" fill="#ffffff" fill-opacity="0.12" />
+      <circle cx="14" cy="16" r="4" fill="#F5C518" />
+      <text x="26" y="20" fill="#ffffff" font-size="11" font-weight="700" letter-spacing="0.5">PORTRA 400</text>
+      <path d="M96 14 L100 18 L104 14" stroke="#F5C518" stroke-width="1.5" fill="none" />
+
+      <!-- Mode Toggle AUTO/PRO -->
+      <g transform="translate(126, 0)">
+        <rect width="98" height="32" rx="16" fill="#ffffff" fill-opacity="0.08" />
+        <rect x="3" y="3" width="46" height="26" rx="13" fill="#F5C518" />
+        <text x="13" y="20" fill="#000000" font-size="10" font-weight="800">AUTO</text>
+        <text x="62" y="20" fill="#888892" font-size="10" font-weight="700">PRO</text>
+      </g>
+
+      <!-- Flash & Info -->
+      <circle cx="282" cy="16" r="16" fill="#ffffff" fill-opacity="0.1" />
+      <path d="M282 9 L276 17 L281 17 L280 23 L288 15 L283 15 Z" fill="#F5C518" />
+
+      <circle cx="322" cy="16" r="16" fill="#ffffff" fill-opacity="0.1" />
+      <text x="320" y="21" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">i</text>
+    </g>
+
+    <!-- Viewfinder 3:4 Sensor -->
+    <g transform="translate(16, 114)">
+      <rect width="361" height="481" rx="20" fill="#18181c" stroke="#ffffff" stroke-opacity="0.15" stroke-width="1" />
+      
+      <!-- Simulação de Cena Fotográfica com gradiente -->
+      <rect x="2" y="2" width="357" height="477" rx="19" fill="url(#lensGradient)" />
+      <!-- Silhueta Minimalista de Arquitetura -->
+      <polygon points="40,477 120,240 200,477" fill="#1f2129" opacity="0.6" />
+      <polygon points="160,477 240,180 320,477" fill="#252833" opacity="0.4" />
+      
+      <!-- Linhas Regra dos Terços -->
+      <line x1="120" y1="0" x2="120" y2="481" stroke="#ffffff" stroke-opacity="0.12" stroke-dasharray="4 4" />
+      <line x1="241" y1="0" x2="241" y2="481" stroke="#ffffff" stroke-opacity="0.12" stroke-dasharray="4 4" />
+      <line x1="0" y1="160" x2="361" y2="160" stroke="#ffffff" stroke-opacity="0.12" stroke-dasharray="4 4" />
+      <line x1="0" y1="321" x2="361" y2="321" stroke="#ffffff" stroke-opacity="0.12" stroke-dasharray="4 4" />
+
+      <!-- Retículo de Foco com Amarelo Kodak -->
+      <g transform="translate(150, 190)">
+        <rect width="60" height="60" fill="none" stroke="#F5C518" stroke-width="1.5" />
+        <circle cx="30" cy="30" r="2.5" fill="#F5C518" />
+        <line x1="30" y1="0" x2="30" y2="8" stroke="#F5C518" stroke-width="1.5" />
+        <line x1="30" y1="52" x2="30" y2="60" stroke="#F5C518" stroke-width="1.5" />
+        <line x1="0" y1="30" x2="8" y2="30" stroke="#F5C518" stroke-width="1.5" />
+        <line x1="52" y1="30" x2="60" y2="30" stroke="#F5C518" stroke-width="1.5" />
+      </g>
+
+      <!-- Seletor de Lentes Flutuante -->
+      <g transform="translate(85, 426)">
+        <rect width="191" height="38" rx="19" fill="#000000" fill-opacity="0.75" stroke="#ffffff" stroke-opacity="0.2" stroke-width="1" />
+        <!-- 0.5x -->
+        <rect x="5" y="5" width="40" height="28" rx="14" fill="#111" />
+        <text x="25" y="23" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">0.5</text>
+        <!-- 1x (Active) -->
+        <rect x="50" y="5" width="44" height="28" rx="14" fill="#F5C518" />
+        <text x="72" y="23" fill="#000000" font-size="11" font-weight="800" text-anchor="middle">1x</text>
+        <!-- 2x -->
+        <rect x="99" y="5" width="40" height="28" rx="14" fill="#111" />
+        <text x="119" y="23" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">2x</text>
+        <!-- 5x -->
+        <rect x="144" y="5" width="40" height="28" rx="14" fill="#111" />
+        <text x="164" y="23" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">5x</text>
+      </g>
+    </g>
+
+    <!-- Slider Auto EV -->
+    <g transform="translate(24, 616)">
+      <rect width="345" height="42" rx="12" fill="#ffffff" fill-opacity="0.05" />
+      <text x="16" y="26" fill="#888892" font-size="12" font-weight="700">EV</text>
+      <!-- Linha do slider -->
+      <line x1="50" y1="21" x2="275" y2="21" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
+      <!-- Ponto central 0.0 -->
+      <circle cx="162" cy="21" r="3" fill="#888892" />
+      <!-- Ponto ativo +0.3 -->
+      <circle cx="185" cy="21" r="8" fill="#F5C518" />
+      <text x="325" y="26" fill="#F5C518" font-size="13" font-weight="800" text-anchor="end">+0.3</text>
+    </g>
+
+    <!-- Bottom Action Bar (Shutter, Gallery, RAW Badge) -->
+    <g transform="translate(24, 688)">
+      <!-- Thumbnail Galeria -->
+      <rect width="56" height="56" rx="12" fill="#222" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5" />
+      <rect x="3" y="3" width="50" height="50" rx="9" fill="#2d303a" />
+      <rect x="8" y="36" width="28" height="13" rx="4" fill="#F5C518" />
+      <text x="13" y="46" fill="#000000" font-size="8" font-weight="900">RAW</text>
+
+      <!-- Botão Obturador Mecânico -->
+      <g transform="translate(136, -8)">
+        <circle cx="36" cy="36" r="38" fill="none" stroke="#ffffff" stroke-width="3.5" />
+        <circle cx="36" cy="36" r="31" fill="url(#shutterRing)" />
+      </g>
+
+      <!-- Badge 14-Bit RAW -->
+      <g transform="translate(275, 12)">
+        <text x="30" y="16" fill="#F5C518" font-size="10" font-weight="800" text-anchor="middle">PORTRA</text>
+        <text x="30" y="30" fill="#888892" font-size="8" font-weight="700" text-anchor="middle">14-BIT RAW</text>
+      </g>
+    </g>
+
+    <!-- Home Indicator -->
+    <rect x="126" y="836" width="140" height="5" rx="2.5" fill="#ffffff" fill-opacity="0.6" />
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- ECRÃ 2: MODO PRO MANUAL (ISO, OBTURADOR, FOCO, WB) -->
+  <!-- ======================================================== -->
+  <g id="Screen-2-ProManual" transform="translate(493, 210)" filter="url(#phoneShadow)">
+    <text x="12" y="-12" fill="#F5C518" font-size="12" font-weight="700" letter-spacing="1">02 · PRO MANUAL MODE</text>
+    <!-- Moldura iPhone 16 Pro -->
+    <rect width="393" height="852" rx="52" fill="#000000" stroke="#333338" stroke-width="2.5" />
+
+    <!-- Dynamic Island -->
+    <rect x="134" y="14" width="125" height="34" rx="17" fill="#000000" stroke="#222" stroke-width="1" />
+    <circle cx="240" cy="31" r="5" fill="#111" />
+
+    <!-- Status Bar -->
+    <text x="38" y="36" fill="#ffffff" font-size="14" font-weight="600">9:41</text>
+    <text x="312" y="36" fill="#ffffff" font-size="12" font-weight="600">5G  100%</text>
+
+    <!-- Top Bar com PRO Ativo -->
+    <g transform="translate(20, 60)">
+      <rect width="112" height="32" rx="16" fill="#ffffff" fill-opacity="0.12" />
+      <circle cx="14" cy="16" r="4" fill="#F5C518" />
+      <text x="26" y="20" fill="#ffffff" font-size="11" font-weight="700">CHROME</text>
+      <path d="M96 14 L100 18 L104 14" stroke="#F5C518" stroke-width="1.5" fill="none" />
+
+      <!-- Mode Toggle AUTO/PRO -->
+      <g transform="translate(126, 0)">
+        <rect width="98" height="32" rx="16" fill="#ffffff" fill-opacity="0.08" />
+        <text x="13" y="20" fill="#888892" font-size="10" font-weight="700">AUTO</text>
+        <rect x="49" y="3" width="46" height="26" rx="13" fill="#F5C518" />
+        <text x="60" y="20" fill="#000000" font-size="10" font-weight="800">PRO</text>
+      </g>
+
+      <circle cx="282" cy="16" r="16" fill="#ffffff" fill-opacity="0.1" />
+      <path d="M282 9 L276 17 L281 17 L280 23 L288 15 L283 15 Z" fill="#ffffff" fill-opacity="0.6" />
+
+      <circle cx="322" cy="16" r="16" fill="#ffffff" fill-opacity="0.1" />
+      <text x="320" y="21" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">i</text>
+    </g>
+
+    <!-- Viewfinder Screen 2 (compacto com Spot Metering) -->
+    <g transform="translate(16, 114)">
+      <rect width="361" height="400" rx="20" fill="#16181d" stroke="#ffffff" stroke-opacity="0.15" stroke-width="1" />
+      
+      <!-- Histograma Live no topo -->
+      <g transform="translate(14, 14)">
+        <rect width="84" height="34" rx="6" fill="#000000" fill-opacity="0.75" stroke="#ffffff" stroke-opacity="0.15" stroke-width="1" />
+        <path d="M12 28 Q 24 16, 36 22 T 60 14 T 72 28 Z" fill="#F5C518" fill-opacity="0.3" stroke="#F5C518" stroke-width="1.5" />
+      </g>
+
+      <!-- Foco Manual / Spot Metering -->
+      <circle cx="180" cy="200" r="18" fill="none" stroke="#F5C518" stroke-width="1.5" stroke-dasharray="3 3" />
+      <circle cx="180" cy="200" r="2" fill="#F5C518" />
+      <text x="180" y="235" fill="#F5C518" font-size="9" font-weight="700" text-anchor="middle">SPOT METER 18%</text>
+    </g>
+
+    <!-- Gaveta de Controlos PRO Manual -->
+    <g transform="translate(16, 528)">
+      <rect width="361" height="152" rx="16" fill="#141418" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />
+      
+      <!-- Tabs ISO / OBT / FOCO / WB -->
+      <g transform="translate(14, 12)">
+        <!-- Tab ISO (Ativa) -->
+        <rect width="76" height="30" rx="8" fill="#F5C518" />
+        <text x="38" y="20" fill="#000000" font-size="11" font-weight="800" text-anchor="middle">ISO</text>
+
+        <!-- Tab OBT -->
+        <rect x="84" width="76" height="30" rx="8" fill="#ffffff" fill-opacity="0.08" />
+        <text x="122" y="20" fill="#ffffff" fill-opacity="0.7" font-size="11" font-weight="700" text-anchor="middle">OBT</text>
+
+        <!-- Tab FOCO -->
+        <rect x="168" width="76" height="30" rx="8" fill="#ffffff" fill-opacity="0.08" />
+        <text x="206" y="20" fill="#ffffff" fill-opacity="0.7" font-size="11" font-weight="700" text-anchor="middle">FOCO</text>
+
+        <!-- Tab WB -->
+        <rect x="252" width="76" height="30" rx="8" fill="#ffffff" fill-opacity="0.08" />
+        <text x="290" y="20" fill="#ffffff" fill-opacity="0.7" font-size="11" font-weight="700" text-anchor="middle">WB</text>
+      </g>
+
+      <!-- Leitura Numérica e Dial de Precisão -->
+      <g transform="translate(16, 58)">
+        <text x="0" y="24" fill="#F5C518" font-size="22" font-weight="900" font-family="monospace">ISO 160</text>
+        <text x="328" y="22" fill="#888892" font-size="11" font-weight="700" text-anchor="end" font-family="monospace">50 · 100 · [160] · 200 · 400</text>
+      </g>
+
+      <!-- Linha Graduada do Dial -->
+      <g transform="translate(16, 92)">
+        <line x1="0" y1="0" x2="328" y2="0" stroke="#ffffff" stroke-opacity="0.2" stroke-width="1.5" />
+        <!-- Ticks -->
+        <line x1="20" y1="-6" x2="20" y2="6" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5" />
+        <line x1="70" y1="-6" x2="70" y2="6" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5" />
+        <line x1="120" y1="-10" x2="120" y2="10" stroke="#F5C518" stroke-width="2.5" />
+        <line x1="170" y1="-6" x2="170" y2="6" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5" />
+        <line x1="220" y1="-6" x2="220" y2="6" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5" />
+        <line x1="270" y1="-6" x2="270" y2="6" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5" />
+        <line x1="310" y1="-6" x2="310" y2="6" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5" />
+      </g>
+
+      <!-- Barra de Telemetria Inferior -->
+      <text x="16" y="136" fill="#ffffff" fill-opacity="0.75" font-size="10.5" font-weight="600" font-family="monospace">1/500s  •  f/1.78  •  24mm Ótico  •  5600K</text>
+    </g>
+
+    <!-- Bottom Bar -->
+    <g transform="translate(24, 698)">
+      <rect width="56" height="56" rx="12" fill="#222" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5" />
+      <g transform="translate(136, -8)">
+        <circle cx="36" cy="36" r="38" fill="none" stroke="#ffffff" stroke-width="3.5" />
+        <circle cx="36" cy="36" r="31" fill="url(#shutterRing)" />
+      </g>
+      <g transform="translate(275, 12)">
+        <text x="30" y="16" fill="#F5C518" font-size="10" font-weight="800" text-anchor="middle">MANUAL</text>
+        <text x="30" y="30" fill="#888892" font-size="8" font-weight="700" text-anchor="middle">LOCKED</text>
+      </g>
+    </g>
+
+    <!-- Home Indicator -->
+    <rect x="126" y="836" width="140" height="5" rx="2.5" fill="#ffffff" fill-opacity="0.6" />
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- ECRÃ 3: FILM RECIPES BOTTOM SHEET -->
+  <!-- ======================================================== -->
+  <g id="Screen-3-Recipes" transform="translate(926, 210)" filter="url(#phoneShadow)">
+    <text x="12" y="-12" fill="#888892" font-size="12" font-weight="700" letter-spacing="1">03 · FILM EMULSIONS SHEET</text>
+    <rect width="393" height="852" rx="52" fill="#000000" stroke="#333338" stroke-width="2.5" />
+
+    <!-- Dynamic Island -->
+    <rect x="134" y="14" width="125" height="34" rx="17" fill="#000000" stroke="#222" stroke-width="1" />
+    <text x="38" y="36" fill="#ffffff" font-size="14" font-weight="600">9:41</text>
+    <text x="312" y="36" fill="#ffffff" font-size="12" font-weight="600">5G  100%</text>
+
+    <!-- Fundo desfoque com viewfinder dimmed -->
+    <rect x="16" y="70" width="361" height="170" rx="16" fill="#111215" opacity="0.6" />
+
+    <!-- Drawer Sheet -->
+    <g transform="translate(0, 210)">
+      <rect width="393" height="642" rx="36" fill="#141417" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1" />
+      <!-- Handle bar -->
+      <rect x="176" y="12" width="40" height="4.5" rx="2.25" fill="#ffffff" fill-opacity="0.3" />
+
+      <!-- Título da Gaveta -->
+      <text x="24" y="52" fill="#ffffff" font-size="20" font-weight="800">Emulsões & Receitas de Filme</text>
+      <text x="24" y="72" fill="#888892" font-size="11" font-weight="400">Curvas químicas baseadas em perfis espectrais reais</text>
+
+      <!-- Cartão 1: Portra 400 (Active) -->
+      <g transform="translate(20, 96)">
+        <rect width="353" height="84" rx="14" fill="#202026" stroke="#F5C518" stroke-width="1.5" />
+        <rect x="12" y="12" width="60" height="60" rx="8" fill="#F5C518" fill-opacity="0.2" />
+        <circle cx="42" cy="42" r="16" fill="#F5C518" />
+        <text x="42" y="47" fill="#000000" font-size="12" font-weight="900" text-anchor="middle">P</text>
+        
+        <text x="86" y="34" fill="#F5C518" font-size="15" font-weight="800">Kodak Portra 400</text>
+        <text x="86" y="52" fill="#ffffff" fill-opacity="0.7" font-size="10.5">Tons de pele dourados, sombras abertas e grão fino.</text>
+        <text x="86" y="66" fill="#888892" font-size="9" font-family="monospace">WARM • +8% SAT • SOFT HIGHLIGHTS</text>
+
+        <!-- Checkmark -->
+        <circle cx="328" cy="42" r="11" fill="#F5C518" />
+        <path d="M323 42 L327 46 L333 38" stroke="#000000" stroke-width="2" fill="none" stroke-linecap="round" />
+      </g>
+
+      <!-- Cartão 2: Classic Chrome -->
+      <g transform="translate(20, 192)">
+        <rect width="353" height="84" rx="14" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1" />
+        <rect x="12" y="12" width="60" height="60" rx="8" fill="#2a3038" />
+        <circle cx="42" cy="42" r="16" fill="#4fa3a5" />
+        <text x="42" y="47" fill="#000000" font-size="12" font-weight="900" text-anchor="middle">C</text>
+
+        <text x="86" y="34" fill="#ffffff" font-size="15" font-weight="800">Fujifilm Classic Chrome</text>
+        <text x="86" y="52" fill="#ffffff" fill-opacity="0.7" font-size="10.5">Saturação contida (-22%) e contraste documental.</text>
+        <text x="86" y="66" fill="#888892" font-size="9" font-family="monospace">COOL CIANO • HARD SHADOWS</text>
+      </g>
+
+      <!-- Cartão 3: Kodak Tri-X 400 -->
+      <g transform="translate(20, 288)">
+        <rect width="353" height="84" rx="14" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1" />
+        <rect x="12" y="12" width="60" height="60" rx="8" fill="#181818" />
+        <circle cx="42" cy="42" r="16" fill="#e0e0e0" />
+        <text x="42" y="47" fill="#000000" font-size="12" font-weight="900" text-anchor="middle">X</text>
+
+        <text x="86" y="34" fill="#ffffff" font-size="15" font-weight="800">Kodak Tri-X 400</text>
+        <text x="86" y="52" fill="#ffffff" fill-opacity="0.7" font-size="10.5">Preto & branco clássico de alto contraste com grão argêntico.</text>
+        <text x="86" y="66" fill="#888892" font-size="9" font-family="monospace">MONO • +35% CONTRAST • ORGANIC GRAIN</text>
+      </g>
+
+      <!-- Cartão 4: Process Zero (Bayer RAW) -->
+      <g transform="translate(20, 384)">
+        <rect width="353" height="84" rx="14" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1" />
+        <rect x="12" y="12" width="60" height="60" rx="8" fill="#102015" />
+        <circle cx="42" cy="42" r="16" fill="#00E676" />
+        <text x="42" y="47" fill="#000000" font-size="12" font-weight="900" text-anchor="middle">0</text>
+
+        <text x="86" y="34" fill="#ffffff" font-size="15" font-weight="800">Process Zero (RAW Puro)</text>
+        <text x="86" y="52" fill="#ffffff" fill-opacity="0.7" font-size="10.5">Sensor Bayer mono-frame puro sem qualquer filtro químico.</text>
+        <text x="86" y="66" fill="#888892" font-size="9" font-family="monospace">14-BIT DNG • ZERO COMPUTAÇÃO</text>
+      </g>
+    </g>
+
+    <!-- Home Indicator -->
+    <rect x="126" y="836" width="140" height="5" rx="2.5" fill="#ffffff" fill-opacity="0.6" />
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- ECRÃ 4: DARKROOM & EXIF INSPECTOR -->
+  <!-- ======================================================== -->
+  <g id="Screen-4-Darkroom" transform="translate(1359, 210)" filter="url(#phoneShadow)">
+    <text x="12" y="-12" fill="#888892" font-size="12" font-weight="700" letter-spacing="1">04 · DARKROOM & RAW INSPECTION</text>
+    <rect width="393" height="852" rx="52" fill="#000000" stroke="#333338" stroke-width="2.5" />
+
+    <!-- Dynamic Island -->
+    <rect x="134" y="14" width="125" height="34" rx="17" fill="#000000" stroke="#222" stroke-width="1" />
+    <text x="38" y="36" fill="#ffffff" font-size="14" font-weight="600">9:41</text>
+    <text x="312" y="36" fill="#ffffff" font-size="12" font-weight="600">5G  100%</text>
+
+    <!-- Top Bar Gallery -->
+    <g transform="translate(20, 60)">
+      <text x="0" y="21" fill="#F5C518" font-size="15" font-weight="700">‹ Câmara</text>
+      
+      <rect x="130" y="3" width="94" height="26" rx="6" fill="#ffffff" fill-opacity="0.1" />
+      <text x="177" y="20" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">14-BIT DNG</text>
+
+      <circle cx="320" cy="16" r="16" fill="#ffffff" fill-opacity="0.1" />
+      <!-- Ícone Partilha -->
+      <path d="M320 8 L320 18 M315 13 L320 8 L325 13 M312 16 L312 23 L328 23 L328 16" stroke="#ffffff" stroke-width="1.5" fill="none" />
+    </g>
+
+    <!-- Moldura Fotográfica com Rebordo de Película (Film Border) -->
+    <g transform="translate(16, 108)">
+      <rect width="361" height="456" rx="14" fill="#0c0d0f" stroke="#ffffff" stroke-opacity="0.2" stroke-width="1" />
+      
+      <!-- Borda Superior da Película -->
+      <rect width="361" height="26" rx="14" fill="#050507" />
+      <text x="14" y="17" fill="#F5C518" font-size="8.5" font-weight="800" font-family="monospace">● KODAK PORTRA 400 • FRAME 24A • 14-BIT RAW</text>
+      <!-- Perfurações da película -->
+      <rect x="300" y="6" width="10" height="14" rx="2" fill="#1a1a20" />
+      <rect x="316" y="6" width="10" height="14" rx="2" fill="#1a1a20" />
+      <rect x="332" y="6" width="10" height="14" rx="2" fill="#1a1a20" />
+
+      <!-- Imagem Fotográfica Revelada -->
+      <rect x="8" y="30" width="345" height="396" rx="8" fill="#20222a" />
+      <!-- Elemento cénico de simulação -->
+      <polygon points="40,426 140,220 240,426" fill="#2a2e3d" />
+      <circle cx="260" cy="140" r="35" fill="#F5C518" fill-opacity="0.75" />
+
+      <!-- Borda Inferior da Película -->
+      <rect y="430" width="361" height="26" rx="14" fill="#050507" />
+      <text x="14" y="447" fill="#F5C518" font-size="8.5" font-weight="800" font-family="monospace">ISO 160 • 1/500s • 24mm f/1.78 • NO APPLE HDR</text>
+    </g>
+
+    <!-- Drawer de Metadados EXIF & Inspetor -->
+    <g transform="translate(16, 578)">
+      <rect width="361" height="160" rx="16" fill="#141418" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1" />
+      
+      <text x="16" y="26" fill="#F5C518" font-size="11" font-weight="800" letter-spacing="1">METADADOS DE CAPTURA ÓTICA</text>
+      
+      <g transform="translate(16, 44)">
+        <text x="0" y="0" fill="#ffffff" font-size="11" font-weight="700">Ficheiro DNG:</text>
+        <text x="328" y="0" fill="#888892" font-size="11" text-anchor="end" font-family="monospace">IMG_0042.DNG (52.4 MB)</text>
+
+        <text x="0" y="22" fill="#ffffff" font-size="11" font-weight="700">Sensor & Ótica:</text>
+        <text x="328" y="22" fill="#888892" font-size="11" text-anchor="end" font-family="monospace">48 MP • 24mm f/1.78 Ótico</text>
+
+        <text x="0" y="44" fill="#ffffff" font-size="11" font-weight="700">Exposição Manual:</text>
+        <text x="328" y="44" fill="#F5C518" font-size="11" text-anchor="end" font-family="monospace">ISO 160 • 1/500s • +0.3 EV</text>
+
+        <text x="0" y="66" fill="#ffffff" font-size="11" font-weight="700">Pipeline Apple:</text>
+        <text x="328" y="66" fill="#00E676" font-size="11" text-anchor="end" font-family="monospace">Smart HDR DESLIGADO</text>
+      </g>
+    </g>
+
+    <!-- Botão de Exportação para o motor Python do PC -->
+    <g transform="translate(16, 752)">
+      <rect width="361" height="50" rx="25" fill="#F5C518" />
+      <text x="180" y="31" fill="#000000" font-size="13.5" font-weight="800" text-anchor="middle">Revelar no Motor Analógico (PC)</text>
+    </g>
+
+    <!-- Home Indicator -->
+    <rect x="126" y="836" width="140" height="5" rx="2.5" fill="#ffffff" fill-opacity="0.6" />
+  </g>
+</svg>

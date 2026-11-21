@@ -1,0 +1,544 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2040 1280" width="2040" height="1280" style="background:#000000; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', sans-serif;">
+  <defs>
+    <!-- Filtros de Elevação e Liquid Glass (iOS 27 HIG) -->
+    <filter id="liquidShadow" x="-15%" y="-10%" width="130%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="32" stdDeviation="40" flood-color="#000000" flood-opacity="0.9" />
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+
+    <!-- Liquid Glass Specular Edge Light (Refração e Borda Especular) -->
+    <linearGradient id="glassBorder" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.45" />
+      <stop offset="30%" stop-color="#FFFFFF" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.04" />
+    </linearGradient>
+
+    <!-- Fundo de Vidro Líquido Translúcido com Matiz Apple Dark -->
+    <linearGradient id="liquidGlassFill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#28282E" stop-opacity="0.75" />
+      <stop offset="100%" stop-color="#141418" stop-opacity="0.82" />
+    </linearGradient>
+
+    <!-- Apple System Yellow / Amber Gold HIG -->
+    <linearGradient id="appleYellow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE033" />
+      <stop offset="100%" stop-color="#FFD60A" />
+    </linearGradient>
+
+    <!-- Gradiente do Sensor e Lente -->
+    <linearGradient id="sensorDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#18191E" />
+      <stop offset="100%" stop-color="#0A0A0D" />
+    </linearGradient>
+
+    <linearGradient id="shutterRing" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#D1D1D6" />
+    </linearGradient>
+  </defs>
+
+  <!-- ======================================================== -->
+  <!-- HEADER BANNER: IOS 27 HIG & IPHONE 16 PRO MAX SPEC -->
+  <!-- ======================================================== -->
+  <g id="Header-Banner" transform="translate(60, 40)">
+    <rect width="1920" height="136" rx="28" fill="#1C1C1E" stroke="url(#glassBorder)" stroke-width="1" />
+    
+    <g transform="translate(40, 26)">
+      <!-- Badge Liquid Glass -->
+      <rect width="270" height="26" rx="13" fill="#FFD60A" fill-opacity="0.15" />
+      <text x="14" y="17.5" fill="#FFD60A" font-size="11" font-weight="800" letter-spacing="1.2">IOS 27 SDK • LIQUID GLASS ARCHITECTURE</text>
+      
+      <text x="0" y="62" fill="#FFFFFF" font-size="28" font-weight="800" letter-spacing="-0.7">ZeroCam — iPhone 16 Pro Max (440 × 956 pt)</text>
+      <text x="0" y="88" fill="#8E8E93" font-size="14" font-weight="400">Ergonomia de polegar 6.9", separação Controlo vs. Conteúdo, proibição de Glass-on-Glass e integração Camera Control</text>
+    </g>
+
+    <!-- Indicadores de Hardware no Topo Direito -->
+    <g transform="translate(1500, 50)">
+      <rect width="180" height="36" rx="18" fill="#2C2C2E" stroke="#3A3A3C" stroke-width="0.5" />
+      <circle cx="20" cy="18" r="4.5" fill="#FFD60A" />
+      <text x="34" y="22.5" fill="#FFFFFF" font-size="12" font-weight="700">6.9" Super Retina XDR</text>
+
+      <rect x="195" y="0" width="185" height="36" rx="18" fill="#2C2C2E" stroke="#3A3A3C" stroke-width="0.5" />
+      <circle cx="215" cy="18" r="4.5" fill="#30D158" />
+      <text x="230" y="22.5" fill="#FFFFFF" font-size="12" font-weight="700">14-Bit Bayer RAW</text>
+    </g>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- ECRÃ 1: CÂMARA PRINCIPAL (IPHONE 16 PRO MAX 440 × 956 PT) -->
+  <!-- ======================================================== -->
+  <g id="Screen-1-Camera" transform="translate(60, 210)" filter="url(#liquidShadow)">
+    <text x="16" y="-12" fill="#8E8E93" font-size="12" font-weight="700" letter-spacing="1">01 · VIEWFINDER 3:4 & ERGONOMIA</text>
+    
+    <!-- Moldura iPhone 16 Pro Max: 440 × 956 pt, Raio 60 pt -->
+    <rect width="440" height="956" rx="60" fill="#000000" stroke="#3A3A3C" stroke-width="2.5" />
+
+    <!-- Botão Físico Camera Control (Borda Direita Inferior, Y=620, Altura 70 pt) -->
+    <rect x="438" y="620" width="4.5" height="72" rx="2.25" fill="#55555C" stroke="#222" stroke-width="0.5" />
+    <!-- Botão de Ação / Action Button (Borda Esquerda Superior, Y=180) -->
+    <rect x="-2.5" y="180" width="4" height="42" rx="2" fill="#55555C" />
+
+    <!-- Dynamic Island Oficial (126 × 37 pt, Top 14 pt, Raio 18.5 pt) -->
+    <g transform="translate(157, 14)">
+      <rect width="126" height="37" rx="18.5" fill="#000000" />
+      <circle cx="106" cy="18.5" r="5.5" fill="#141414" stroke="#222" stroke-width="0.5" />
+      <circle cx="28" cy="18.5" r="3.5" fill="#141414" />
+    </g>
+
+    <!-- Safe Area Top (62 pt) - Status Bar -->
+    <text x="44" y="42" fill="#FFFFFF" font-size="17" font-weight="600" letter-spacing="-0.4">9:41</text>
+    <g transform="translate(340, 28)">
+      <rect x="0" y="8" width="3.5" height="5" rx="0.5" fill="#FFFFFF" />
+      <rect x="5.5" y="6" width="3.5" height="7" rx="0.5" fill="#FFFFFF" />
+      <rect x="11" y="3" width="3.5" height="10" rx="0.5" fill="#FFFFFF" />
+      <rect x="16.5" y="0" width="3.5" height="13" rx="0.5" fill="#FFFFFF" />
+      <rect x="42" y="1" width="24" height="12.5" rx="4" fill="none" stroke="#FFFFFF" stroke-width="1.2" />
+      <rect x="44" y="3" width="16" height="8.5" rx="2" fill="#FFFFFF" />
+      <path d="M67 4.5 C68 4.5, 68 8.5, 67 8.5" stroke="#FFFFFF" stroke-width="1.2" />
+    </g>
+
+    <!-- Barra de Controlos Superiores (Controlo Secundário Flutuante) -->
+    <g transform="translate(20, 68)">
+      <!-- Botão Flash (.buttonStyle(.glass)) -->
+      <circle cx="22" cy="22" r="22" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+      <path d="M21 13 L16 21 L21 21 L20 31 L28 20 L23 20 Z" fill="#8E8E93" />
+      <line x1="14" y1="14" x2="30" y2="30" stroke="#8E8E93" stroke-width="1.5" />
+
+      <!-- Cápsula Seletora de Filme Liquid Glass (.buttonStyle(.glass)) -->
+      <g transform="translate(56, 2)">
+        <rect width="144" height="40" rx="20" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+        <circle cx="18" cy="20" r="5" fill="#FFD60A" />
+        <text x="32" y="24.5" fill="#FFFFFF" font-size="12" font-weight="700" letter-spacing="0.5">PORTRA 400</text>
+        <path d="M122 18 L127 23 L132 18" stroke="#FFD60A" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      </g>
+
+      <!-- Toggle AUTO / PRO Liquid Glass com Morphing -->
+      <g transform="translate(210, 2)">
+        <rect width="138" height="40" rx="20" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+        <!-- Segmento Ativo AUTO em Amarelo -->
+        <rect x="4" y="4" width="65" height="32" rx="16" fill="#FFD60A" />
+        <text x="36.5" y="24.5" fill="#000000" font-size="11.5" font-weight="800" text-anchor="middle">AUTO</text>
+        <text x="101.5" y="24.5" fill="#8E8E93" font-size="11.5" font-weight="700" text-anchor="middle">PRO</text>
+      </g>
+
+      <!-- Botão Info (.buttonStyle(.glass)) -->
+      <circle cx="378" cy="22" r="22" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+      <circle cx="378" cy="22" r="10" fill="none" stroke="#FFFFFF" stroke-width="1.5" />
+      <text x="378" y="26.5" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle">i</text>
+    </g>
+
+    <!-- CAMADA DE CONTEÚDO: Viewfinder 3:4 Sensor (408 × 544 pt, Raio 28 pt) -->
+    <!-- Proibido Glass em conteúdo segundo regra 4.1! É superfície sólida ótica. -->
+    <g transform="translate(16, 122)">
+      <rect width="408" height="544" rx="28" fill="#121316" stroke="#2C2C2E" stroke-width="1" />
+      <rect x="2" y="2" width="404" height="540" rx="26" fill="url(#sensorDark)" />
+
+      <!-- Linhas Regra dos Terços (10% White) -->
+      <line x1="136" y1="0" x2="136" y2="544" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="0.5" />
+      <line x1="272" y1="0" x2="272" y2="544" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="0.5" />
+      <line x1="0" y1="181" x2="408" y2="181" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="0.5" />
+      <line x1="0" y1="363" x2="408" y2="363" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="0.5" />
+
+      <!-- Linha de Nível Ótico Virtual (Amarelo Dourado) -->
+      <line x1="170" y1="272" x2="195" y2="272" stroke="#FFD60A" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="213" y1="272" x2="238" y2="272" stroke="#FFD60A" stroke-width="1.5" stroke-linecap="round" />
+      <circle cx="204" cy="272" r="1.5" fill="#FFD60A" />
+
+      <!-- Retículo Central de Foco -->
+      <g transform="translate(169, 237)">
+        <rect width="70" height="70" rx="2" fill="none" stroke="#FFD60A" stroke-width="1.5" />
+        <circle cx="35" cy="35" r="3" fill="#FFD60A" />
+      </g>
+
+      <!-- Badge de Lente Ótica Ativa: 24mm ƒ/1.78 Ótico -->
+      <g transform="translate(16, 16)">
+        <rect width="148" height="26" rx="13" fill="#000000" fill-opacity="0.65" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="0.5" />
+        <text x="24" y="17.5" fill="#EBEBF5" font-size="10.5" font-weight="700" font-family="monospace">24mm • ƒ/1.78 ÓTICO</text>
+      </g>
+
+      <!-- Seletor de Lentes Flutuante Liquid Glass (.glassEffect) -->
+      <g transform="translate(94, 480)">
+        <rect width="220" height="46" rx="23" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+        <!-- .5 -->
+        <circle cx="29" cy="23" r="18" fill="#1C1C1E" />
+        <text x="29" y="27.5" fill="#FFFFFF" font-size="12" font-weight="700" text-anchor="middle">.5</text>
+        <!-- 1x (Ativo - Amarelo Apple) -->
+        <circle cx="84" cy="23" r="20" fill="#FFD60A" />
+        <text x="84" y="28" fill="#000000" font-size="13" font-weight="800" text-anchor="middle">1x</text>
+        <!-- 2x -->
+        <circle cx="139" cy="23" r="18" fill="#1C1C1E" />
+        <text x="139" y="27.5" fill="#FFFFFF" font-size="12" font-weight="700" text-anchor="middle">2</text>
+        <!-- 5x -->
+        <circle cx="191" cy="23" r="18" fill="#1C1C1E" />
+        <text x="191" y="27.5" fill="#FFFFFF" font-size="12" font-weight="700" text-anchor="middle">5</text>
+      </g>
+    </g>
+
+    <!-- CAMADA DE CONTROLO INFERIOR (ZONA ERGONÓMICA DE POLEGAR - Y > 680 pt) -->
+    <!-- Slider Auto EV com Liquid Glass -->
+    <g transform="translate(20, 680)">
+      <rect width="400" height="52" rx="18" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+      <text x="20" y="31.5" fill="#8E8E93" font-size="12" font-weight="800">EV</text>
+      <!-- Linha do Slider -->
+      <line x1="58" y1="26" x2="320" y2="26" stroke="#3A3A3C" stroke-width="3" stroke-linecap="round" />
+      <circle cx="189" cy="26" r="3.5" fill="#8E8E93" />
+      <!-- Knob Apple com Glow e Sombra -->
+      <circle cx="218" cy="26" r="13" fill="#FFD60A" stroke="#FFFFFF" stroke-width="2" />
+      <text x="378" y="31.5" fill="#FFD60A" font-size="14" font-weight="800" text-anchor="end">+0.3</text>
+    </g>
+
+    <!-- Barra de Ações Principais (Thumb Cluster 6.9") -->
+    <g transform="translate(24, 756)">
+      <!-- Miniatura Galeria (> 44 × 44 pt touch target) -->
+      <rect width="64" height="64" rx="18" fill="#2C2C2E" stroke="#48484A" stroke-width="1" />
+      <rect x="4" y="4" width="56" height="56" rx="14" fill="#141416" />
+      <rect x="10" y="42" width="32" height="14" rx="4" fill="#FFD60A" />
+      <text x="16" y="52.5" fill="#000000" font-size="9" font-weight="900">RAW</text>
+
+      <!-- Botão Obturador Mecânico (.buttonStyle(.glassProminent)) -->
+      <g transform="translate(156, -8)">
+        <!-- Halo Especular de Vidro Líquido -->
+        <circle cx="40" cy="40" r="44" fill="none" stroke="url(#glassBorder)" stroke-width="2" />
+        <circle cx="40" cy="40" r="40" fill="none" stroke="#FFFFFF" stroke-width="4" />
+        <circle cx="40" cy="40" r="32" fill="url(#shutterRing)" />
+      </g>
+
+      <!-- Status Densitométrico à Direita -->
+      <g transform="translate(306, 14)">
+        <text x="35" y="16" fill="#FFD60A" font-size="12" font-weight="800" text-anchor="middle">PORTRA</text>
+        <text x="35" y="32" fill="#8E8E93" font-size="9" font-weight="700" text-anchor="middle">14-BIT RAW</text>
+      </g>
+    </g>
+
+    <!-- Indicador de Interface Camera Control (Borda Direita) -->
+    <g transform="translate(390, 630)">
+      <rect width="40" height="52" rx="14" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+      <text x="20" y="24" fill="#FFD60A" font-size="9" font-weight="800" text-anchor="middle">ZOOM</text>
+      <text x="20" y="40" fill="#FFFFFF" font-size="11" font-weight="700" text-anchor="middle">1.0×</text>
+    </g>
+
+    <!-- Safe Area Bottom: Home Indicator Oficial (139 × 5 pt, Bottom 12 pt) -->
+    <rect x="150.5" y="940" width="139" height="5" rx="2.5" fill="#FFFFFF" fill-opacity="0.8" />
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- ECRÃ 2: CONTROLOS MANUAIS PRO (SEM GLASS-ON-GLASS) -->
+  <!-- ======================================================== -->
+  <g id="Screen-2-ProHUD" transform="translate(540, 210)" filter="url(#liquidShadow)">
+    <text x="16" y="-12" fill="#FFD60A" font-size="12" font-weight="700" letter-spacing="1">02 · PRO HUD (REGRA CONTROLO VS. CONTEÚDO)</text>
+    <rect width="440" height="956" rx="60" fill="#000000" stroke="#3A3A3C" stroke-width="2.5" />
+
+    <g transform="translate(157, 14)">
+      <rect width="126" height="37" rx="18.5" fill="#000000" />
+      <circle cx="106" cy="18.5" r="5.5" fill="#141414" />
+      <circle cx="28" cy="18.5" r="3.5" fill="#141414" />
+    </g>
+
+    <text x="44" y="42" fill="#FFFFFF" font-size="17" font-weight="600">9:41</text>
+    <g transform="translate(340, 28)">
+      <rect x="0" y="8" width="3.5" height="5" rx="0.5" fill="#FFFFFF" />
+      <rect x="5.5" y="6" width="3.5" height="7" rx="0.5" fill="#FFFFFF" />
+      <rect x="11" y="3" width="3.5" height="10" rx="0.5" fill="#FFFFFF" />
+      <rect x="16.5" y="0" width="3.5" height="13" rx="0.5" fill="#FFFFFF" />
+      <rect x="42" y="1" width="24" height="12.5" rx="4" fill="none" stroke="#FFFFFF" stroke-width="1.2" />
+      <rect x="44" y="3" width="16" height="8.5" rx="2" fill="#FFFFFF" />
+      <path d="M67 4.5 C68 4.5, 68 8.5, 67 8.5" stroke="#FFFFFF" stroke-width="1.2" />
+    </g>
+
+    <!-- Top Bar com PRO Ativo -->
+    <g transform="translate(20, 68)">
+      <circle cx="22" cy="22" r="22" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+      <path d="M21 13 L16 21 L21 21 L20 31 L28 20 L23 20 Z" fill="#8E8E93" />
+      <line x1="14" y1="14" x2="30" y2="30" stroke="#8E8E93" stroke-width="1.5" />
+
+      <g transform="translate(56, 2)">
+        <rect width="144" height="40" rx="20" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+        <circle cx="18" cy="20" r="5" fill="#FFD60A" />
+        <text x="32" y="24.5" fill="#FFFFFF" font-size="12" font-weight="700">CHROME</text>
+        <path d="M122 18 L127 23 L132 18" stroke="#FFD60A" stroke-width="1.8" fill="none" />
+      </g>
+
+      <g transform="translate(210, 2)">
+        <rect width="138" height="40" rx="20" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+        <text x="36.5" y="24.5" fill="#8E8E93" font-size="11.5" font-weight="700" text-anchor="middle">AUTO</text>
+        <rect x="69" y="4" width="65" height="32" rx="16" fill="#FFD60A" />
+        <text x="101.5" y="24.5" fill="#000000" font-size="11.5" font-weight="800" text-anchor="middle">PRO</text>
+      </g>
+
+      <circle cx="378" cy="22" r="22" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+      <circle cx="378" cy="22" r="10" fill="none" stroke="#FFFFFF" stroke-width="1.5" />
+      <text x="378" y="26.5" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle">i</text>
+    </g>
+
+    <!-- Viewfinder Compacto (408 × 460 pt) -->
+    <g transform="translate(16, 122)">
+      <rect width="408" height="460" rx="28" fill="#121316" stroke="#2C2C2E" stroke-width="1" />
+      <rect x="2" y="2" width="404" height="456" rx="26" fill="url(#sensorDark)" />
+
+      <!-- Histograma Bayer RAW no topo esquerdo -->
+      <g transform="translate(16, 16)">
+        <rect width="96" height="40" rx="10" fill="#000000" fill-opacity="0.8" stroke="#3A3A3C" stroke-width="0.5" />
+        <path d="M12 32 Q 26 16, 42 22 T 70 12 T 86 32 Z" fill="#FFD60A" fill-opacity="0.3" stroke="#FFD60A" stroke-width="1.5" />
+      </g>
+
+      <!-- Spot Metering 18% Gray -->
+      <circle cx="204" cy="225" r="24" fill="none" stroke="#FFD60A" stroke-width="1.5" stroke-dasharray="4 4" />
+      <circle cx="204" cy="225" r="2.5" fill="#FFD60A" />
+      <rect x="156" y="258" width="96" height="20" rx="10" fill="#000000" fill-opacity="0.75" />
+      <text x="204" y="272" fill="#FFD60A" font-size="9.5" font-weight="800" text-anchor="middle" font-family="monospace">SPOT 18%</text>
+    </g>
+
+    <!-- GAVETA PRO MANUAL: Contentor Liquid Glass Único (Regra 4.2: Sem Glass-on-Glass) -->
+    <!-- Os botões internos são preenchimentos sólidos #2C2C2E, NÃO vidros aninhados! -->
+    <g transform="translate(16, 594)">
+      <rect width="408" height="156" rx="24" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+      
+      <!-- Abas de Parâmetro PRO (> 44 × 44 pt touch targets) -->
+      <g transform="translate(14, 14)">
+        <rect width="380" height="42" rx="12" fill="#1C1C1E" />
+        <!-- Aba ISO Ativa (Sólida Amarela) -->
+        <rect x="4" y="4" width="90" height="34" rx="10" fill="#FFD60A" />
+        <text x="49" y="25" fill="#000000" font-size="12" font-weight="800" text-anchor="middle">ISO</text>
+        <!-- Aba OBT -->
+        <text x="144" y="25" fill="#FFFFFF" fill-opacity="0.8" font-size="12" font-weight="700" text-anchor="middle">OBT</text>
+        <!-- Aba FOCO -->
+        <text x="239" y="25" fill="#FFFFFF" fill-opacity="0.8" font-size="12" font-weight="700" text-anchor="middle">FOCO</text>
+        <!-- Aba WB -->
+        <text x="334" y="25" fill="#FFFFFF" fill-opacity="0.8" font-size="12" font-weight="700" text-anchor="middle">WB</text>
+      </g>
+
+      <!-- Leitura Numérica e Dial -->
+      <g transform="translate(20, 72)">
+        <text x="0" y="24" fill="#FFD60A" font-size="24" font-weight="900" font-family="monospace">ISO 160</text>
+        <text x="368" y="22" fill="#8E8E93" font-size="12" font-weight="700" text-anchor="end" font-family="monospace">50 · 100 · [160] · 200 · 400</text>
+      </g>
+
+      <!-- Linha Graduada -->
+      <g transform="translate(20, 108)">
+        <line x1="0" y1="0" x2="368" y2="0" stroke="#3A3A3C" stroke-width="1.5" />
+        <line x1="25" y1="-5" x2="25" y2="5" stroke="#48484A" stroke-width="1.5" />
+        <line x1="80" y1="-5" x2="80" y2="5" stroke="#48484A" stroke-width="1.5" />
+        <line x1="140" y1="-10" x2="140" y2="10" stroke="#FFD60A" stroke-width="3" stroke-linecap="round" />
+        <line x1="200" y1="-5" x2="200" y2="5" stroke="#48484A" stroke-width="1.5" />
+        <line x1="260" y1="-5" x2="260" y2="5" stroke="#48484A" stroke-width="1.5" />
+        <line x1="320" y1="-5" x2="320" y2="5" stroke="#48484A" stroke-width="1.5" />
+      </g>
+
+      <!-- Telemetria Monocadência -->
+      <text x="20" y="142" fill="#EBEBF5" font-size="11.5" font-weight="700" font-family="monospace">1/500s  •  ƒ/1.78  •  24mm Ótico  •  5600K</text>
+    </g>
+
+    <!-- Bottom Bar -->
+    <g transform="translate(24, 762)">
+      <rect width="64" height="64" rx="18" fill="#2C2C2E" stroke="#48484A" stroke-width="1" />
+      <g transform="translate(156, -8)">
+        <circle cx="40" cy="40" r="44" fill="none" stroke="url(#glassBorder)" stroke-width="2" />
+        <circle cx="40" cy="40" r="40" fill="none" stroke="#FFFFFF" stroke-width="4" />
+        <circle cx="40" cy="40" r="32" fill="url(#shutterRing)" />
+      </g>
+      <g transform="translate(306, 14)">
+        <text x="35" y="16" fill="#FFD60A" font-size="12" font-weight="800" text-anchor="middle">MANUAL</text>
+        <text x="35" y="32" fill="#8E8E93" font-size="9" font-weight="700" text-anchor="middle">LOCK</text>
+      </g>
+    </g>
+
+    <rect x="150.5" y="940" width="139" height="5" rx="2.5" fill="#FFFFFF" fill-opacity="0.8" />
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- ECRÃ 3: EMULSÕES DE FILME (LIQUID GLASS SHEET NATIVO) -->
+  <!-- ======================================================== -->
+  <g id="Screen-3-Sheet" transform="translate(1020, 210)" filter="url(#liquidShadow)">
+    <text x="16" y="-12" fill="#8E8E93" font-size="12" font-weight="700" letter-spacing="1">03 · LIQUID GLASS SHEET (REGRA 4.1)</text>
+    <rect width="440" height="956" rx="60" fill="#000000" stroke="#3A3A3C" stroke-width="2.5" />
+
+    <g transform="translate(157, 14)">
+      <rect width="126" height="37" rx="18.5" fill="#000000" />
+      <circle cx="106" cy="18.5" r="5.5" fill="#141414" />
+      <circle cx="28" cy="18.5" r="3.5" fill="#141414" />
+    </g>
+
+    <text x="44" y="42" fill="#FFFFFF" font-size="17" font-weight="600">9:41</text>
+    <g transform="translate(340, 28)">
+      <rect x="0" y="8" width="3.5" height="5" rx="0.5" fill="#FFFFFF" />
+      <rect x="5.5" y="6" width="3.5" height="7" rx="0.5" fill="#FFFFFF" />
+      <rect x="11" y="3" width="3.5" height="10" rx="0.5" fill="#FFFFFF" />
+      <rect x="16.5" y="0" width="3.5" height="13" rx="0.5" fill="#FFFFFF" />
+      <rect x="42" y="1" width="24" height="12.5" rx="4" fill="none" stroke="#FFFFFF" stroke-width="1.2" />
+      <rect x="44" y="3" width="16" height="8.5" rx="2" fill="#FFFFFF" />
+      <path d="M67 4.5 C68 4.5, 68 8.5, 67 8.5" stroke="#FFFFFF" stroke-width="1.2" />
+    </g>
+
+    <!-- Fundo desfoque do ecrã com scrim escuro 35% (Regra 4.4) -->
+    <rect x="16" y="70" width="408" height="150" rx="24" fill="#111215" opacity="0.6" />
+
+    <!-- MODAL SHEET LIQUID GLASS (iOS 27 SDK) -->
+    <g transform="translate(0, 160)">
+      <rect width="440" height="796" rx="44" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1.5" />
+      <!-- Grabber da Sheet Apple (36 × 5 pt, Top 10 pt) -->
+      <rect x="202" y="10" width="36" height="5" rx="2.5" fill="#FFFFFF" fill-opacity="0.35" />
+
+      <!-- Navigation Header -->
+      <g transform="translate(24, 30)">
+        <text x="0" y="26" fill="#FFFFFF" font-size="22" font-weight="800" letter-spacing="-0.5">Emulsões de Filme</text>
+        <text x="392" y="26" fill="#FFD60A" font-size="17" font-weight="700" text-anchor="end">OK</text>
+        <text x="0" y="48" fill="#8E8E93" font-size="13">Perfis espectrais calibrados sem tone-mapping digital</text>
+      </g>
+
+      <!-- Cartões de Conteúdo Sólidos (REGRA 4.1 & 4.2: NUNCA USAR GLASS DENTRO DE GLASS!) -->
+      <g transform="translate(20, 96)">
+        <!-- Card 1: Portra 400 (Ativo) -->
+        <g transform="translate(0, 0)">
+          <rect width="400" height="92" rx="18" fill="#2C2C2E" stroke="#FFD60A" stroke-width="1.5" />
+          <rect x="16" y="16" width="60" height="60" rx="14" fill="#FFD60A" fill-opacity="0.2" />
+          <circle cx="46" cy="46" r="16" fill="#FFD60A" />
+          <text x="46" y="51" fill="#000000" font-size="14" font-weight="900" text-anchor="middle">P</text>
+
+          <text x="92" y="38" fill="#FFD60A" font-size="16" font-weight="800">Kodak Portra 400</text>
+          <text x="92" y="56" fill="#EBEBF5" font-size="11.5">Tons de pele dourados, sombras suaves e grão fino.</text>
+          <text x="92" y="72" fill="#8E8E93" font-size="10" font-family="monospace">WARM • 5900K • +8% SAT</text>
+
+          <circle cx="370" cy="46" r="12" fill="#FFD60A" />
+          <path d="M365 46 L369 50 L376 42" stroke="#000000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        </g>
+
+        <!-- Card 2: Classic Chrome -->
+        <g transform="translate(0, 104)">
+          <rect width="400" height="92" rx="18" fill="#1C1C1E" stroke="#3A3A3C" stroke-width="0.5" />
+          <rect x="16" y="16" width="60" height="60" rx="14" fill="#2A3038" />
+          <circle cx="46" cy="46" r="16" fill="#4FA3A5" />
+          <text x="46" y="51" fill="#000000" font-size="14" font-weight="900" text-anchor="middle">C</text>
+
+          <text x="92" y="38" fill="#FFFFFF" font-size="16" font-weight="800">Fujifilm Classic Chrome</text>
+          <text x="92" y="56" fill="#EBEBF5" font-size="11.5">Saturação contida (-22%) e sombras dramáticas.</text>
+          <text x="92" y="72" fill="#8E8E93" font-size="10" font-family="monospace">COOL CIANO • 6700K • HARD SHADOWS</text>
+        </g>
+
+        <!-- Card 3: Kodak Tri-X 400 -->
+        <g transform="translate(0, 208)">
+          <rect width="400" height="92" rx="18" fill="#1C1C1E" stroke="#3A3A3C" stroke-width="0.5" />
+          <rect x="16" y="16" width="60" height="60" rx="14" fill="#181818" />
+          <circle cx="46" cy="46" r="16" fill="#E5E5EA" />
+          <text x="46" y="51" fill="#000000" font-size="14" font-weight="900" text-anchor="middle">X</text>
+
+          <text x="92" y="38" fill="#FFFFFF" font-size="16" font-weight="800">Kodak Tri-X 400</text>
+          <text x="92" y="56" fill="#EBEBF5" font-size="11.5">Preto & branco clássico com grão argêntico orgânico.</text>
+          <text x="92" y="72" fill="#8E8E93" font-size="10" font-family="monospace">MONO • +35% CONTRAST • ORGANIC GRAIN</text>
+        </g>
+
+        <!-- Card 4: Process Zero (Bayer RAW) -->
+        <g transform="translate(0, 312)">
+          <rect width="400" height="92" rx="18" fill="#1C1C1E" stroke="#3A3A3C" stroke-width="0.5" />
+          <rect x="16" y="16" width="60" height="60" rx="14" fill="#16281B" />
+          <circle cx="46" cy="46" r="16" fill="#30D158" />
+          <text x="46" y="51" fill="#000000" font-size="14" font-weight="900" text-anchor="middle">0</text>
+
+          <text x="92" y="38" fill="#FFFFFF" font-size="16" font-weight="800">Process Zero (RAW Puro)</text>
+          <text x="92" y="56" fill="#EBEBF5" font-size="11.5">Ótica mono-frame pura sem qualquer interpolação.</text>
+          <text x="92" y="72" fill="#8E8E93" font-size="10" font-family="monospace">14-BIT DNG • ZERO COMPUTAÇÃO APPLE</text>
+        </g>
+      </g>
+    </g>
+
+    <rect x="150.5" y="940" width="139" height="5" rx="2.5" fill="#FFFFFF" fill-opacity="0.8" />
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- ECRÃ 4: DARKROOM & EXIF INSPECTOR (APPLE PHOTOS) -->
+  <!-- ======================================================== -->
+  <g id="Screen-4-Darkroom" transform="translate(1500, 210)" filter="url(#liquidShadow)">
+    <text x="16" y="-12" fill="#8E8E93" font-size="12" font-weight="700" letter-spacing="1">04 · DARKROOM & INSPEÇÃO 14-BIT</text>
+    <rect width="440" height="956" rx="60" fill="#000000" stroke="#3A3A3C" stroke-width="2.5" />
+
+    <g transform="translate(157, 14)">
+      <rect width="126" height="37" rx="18.5" fill="#000000" />
+      <circle cx="106" cy="18.5" r="5.5" fill="#141414" />
+      <circle cx="28" cy="18.5" r="3.5" fill="#141414" />
+    </g>
+
+    <text x="44" y="42" fill="#FFFFFF" font-size="17" font-weight="600">9:41</text>
+    <g transform="translate(340, 28)">
+      <rect x="0" y="8" width="3.5" height="5" rx="0.5" fill="#FFFFFF" />
+      <rect x="5.5" y="6" width="3.5" height="7" rx="0.5" fill="#FFFFFF" />
+      <rect x="11" y="3" width="3.5" height="10" rx="0.5" fill="#FFFFFF" />
+      <rect x="16.5" y="0" width="3.5" height="13" rx="0.5" fill="#FFFFFF" />
+      <rect x="42" y="1" width="24" height="12.5" rx="4" fill="none" stroke="#FFFFFF" stroke-width="1.2" />
+      <rect x="44" y="3" width="16" height="8.5" rx="2" fill="#FFFFFF" />
+      <path d="M67 4.5 C68 4.5, 68 8.5, 67 8.5" stroke="#FFFFFF" stroke-width="1.2" />
+    </g>
+
+    <!-- NavigationBar Liquid Glass -->
+    <g transform="translate(20, 68)">
+      <path d="M6 14 L0 8 L6 2" stroke="#FFD60A" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      <text x="14" y="12" fill="#FFD60A" font-size="16.5" font-weight="600">Câmara</text>
+
+      <rect x="142" y="-4" width="116" height="32" rx="10" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+      <text x="200" y="17" fill="#FFFFFF" font-size="11.5" font-weight="800" text-anchor="middle">14-BIT DNG</text>
+
+      <g transform="translate(362, -4)">
+        <circle cx="18" cy="16" r="18" fill="url(#liquidGlassFill)" stroke="url(#glassBorder)" stroke-width="1" />
+        <path d="M18 7 L18 18 M13 12 L18 7 L23 12 M11 15 L11 23 L25 23 L25 15" stroke="#FFFFFF" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      </g>
+    </g>
+
+    <!-- Moldura de Película Fotográfica Contact Sheet -->
+    <g transform="translate(16, 118)">
+      <rect width="408" height="500" rx="20" fill="#0C0D0F" stroke="#2C2C2E" stroke-width="1" />
+      
+      <!-- Borda Superior da Película -->
+      <rect width="408" height="28" rx="20" fill="#050507" />
+      <text x="16" y="18" fill="#FFD60A" font-size="9.5" font-weight="800" font-family="monospace">● KODAK PORTRA 400 • FRAME 24A • 14-BIT RAW</text>
+      <rect x="336" y="7" width="14" height="14" rx="2" fill="#1C1C1E" />
+      <rect x="356" y="7" width="14" height="14" rx="2" fill="#1C1C1E" />
+      <rect x="376" y="7" width="14" height="14" rx="2" fill="#1C1C1E" />
+
+      <!-- Imagem Fotográfica Revelada -->
+      <rect x="8" y="32" width="392" height="436" rx="12" fill="#181A22" />
+      <polygon points="50,468 160,230 270,468" fill="#242838" />
+      <circle cx="290" cy="150" r="42" fill="#FFD60A" fill-opacity="0.8" />
+
+      <!-- Borda Inferior da Película -->
+      <rect y="472" width="408" height="28" rx="20" fill="#050507" />
+      <text x="16" y="490" fill="#FFD60A" font-size="9.5" font-weight="800" font-family="monospace">ISO 160 • 1/500s • 24mm ƒ/1.78 • NO APPLE SMART HDR</text>
+    </g>
+
+    <!-- Cartão de Inspeção EXIF (Conteúdo Sólido #1C1C1E - Sem Glass) -->
+    <g transform="translate(16, 634)">
+      <rect width="408" height="180" rx="22" fill="#1C1C1E" stroke="#3A3A3C" stroke-width="0.5" />
+      
+      <text x="20" y="26" fill="#8E8E93" font-size="11.5" font-weight="800" letter-spacing="0.6">METADADOS ÓTICOS BRUTOS</text>
+      <text x="20" y="48" fill="#FFFFFF" font-size="15.5" font-weight="800">iPhone 16 Pro Max • Main Optical Sensor</text>
+      <text x="20" y="66" fill="#8E8E93" font-size="12">24 mm ƒ/1.78 • 48 MP (8064 × 6048) • Mono Bayer</text>
+
+      <!-- Pills de Parâmetro -->
+      <g transform="translate(20, 84)">
+        <rect width="74" height="28" rx="8" fill="#2C2C2E" />
+        <text x="37" y="18.5" fill="#FFFFFF" font-size="11.5" font-weight="700" text-anchor="middle">ISO 160</text>
+
+        <rect x="82" width="66" height="28" rx="8" fill="#2C2C2E" />
+        <text x="115" y="18.5" fill="#FFFFFF" font-size="11.5" font-weight="700" text-anchor="middle">24 mm</text>
+
+        <rect x="156" width="64" height="28" rx="8" fill="#2C2C2E" />
+        <text x="188" y="18.5" fill="#FFFFFF" font-size="11.5" font-weight="700" text-anchor="middle">+0.3 EV</text>
+
+        <rect x="228" width="64" height="28" rx="8" fill="#2C2C2E" />
+        <text x="260" y="18.5" fill="#FFFFFF" font-size="11.5" font-weight="700" text-anchor="middle">ƒ/1.78</text>
+
+        <rect x="300" width="70" height="28" rx="8" fill="#2C2C2E" />
+        <text x="335" y="18.5" fill="#FFD60A" font-size="11.5" font-weight="800" text-anchor="middle">1/500 s</text>
+      </g>
+
+      <line x1="20" y1="128" x2="388" y2="128" stroke="#3A3A3C" stroke-width="0.5" />
+      <text x="20" y="152" fill="#30D158" font-size="12" font-weight="800">Adobe DNG 14-Bit</text>
+      <text x="388" y="152" fill="#8E8E93" font-size="11.5" text-anchor="end" font-family="monospace">52.4 MB • Sem Redes Neurais</text>
+    </g>
+
+    <!-- Botão Principal de Revelação (.buttonStyle(.glassProminent)) -->
+    <g transform="translate(16, 830)">
+      <rect width="408" height="56" rx="28" fill="#FFD60A" />
+      <text x="204" y="34" fill="#000000" font-size="15.5" font-weight="800" text-anchor="middle">Revelar no Motor Analógico (PC)</text>
+    </g>
+
+    <rect x="150.5" y="940" width="139" height="5" rx="2.5" fill="#FFFFFF" fill-opacity="0.8" />
+  </g>
+</svg>
